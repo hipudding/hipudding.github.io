@@ -1,5 +1,11 @@
 ---
 title: my first post
-date: 2019-08-01 22:02:55
+date: 2019-08-01 22:12:12
 tags:
 ---
+
+This is my first post!
+
+
+
+here is my dog ![](my_dog.jpg)
