@@ -8,4 +8,6 @@ This is my first post!
 
 
 
-here is my dog ![](my_dog.jpg)
+here is my dog 
+
+{% asset_img my_dog.jpg This is an example image %}
