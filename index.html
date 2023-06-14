@@ -282,7 +282,7 @@ target="_blank" rel="noopener" href="https://github.com/mpi4py/mpi4py/issues/343
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-14 11:34:37" itemprop="dateModified" datetime="2023-06-14T11:34:37+08:00">2023-06-14</time>
+                <time title="修改时间：2023-06-14 11:40:55" itemprop="dateModified" datetime="2023-06-14T11:40:55+08:00">2023-06-14</time>
               </span>
 
           
@@ -348,7 +348,7 @@ target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-ve
 <li>首先获取Accelerator（加速器），判断能不能import
 intel_extension_for_deepspeed，如果能就用XPU，如果不能就用CUDA（Accelerator将设备管理，内存管理，Tensor等等进行了抽象，不同的后端设备继承实现），高版本这部分逻辑有改变，可以通过环境变量控制。<strong>切入点1，这里需要判断是否能够使用npu</strong></li>
 <li>选择并行计算后端，如果Torch.distributed已经初始化，则使用直接使用，检查是否在Aure或者aws机器上，针对这些机器做环境变量配置，否则尝试寻找mpi，然后根据Accelerator的comm
-backend类型初始化TorchBackend.<strong>切入点2，这里需要针对华为云机器做专门的环境变量配置，以及支持升腾并行后端</strong></li>
+backend类型初始化TorchBackend.<strong>切入点2，这里需要针对华为云机器做专门的环境变量配置，以及支持昇腾并行后端</strong></li>
 <li>解析ds的配置文件</li>
 <li>创建ds引擎
 <ol type="1">
@@ -359,7 +359,7 @@ backend类型初始化TorchBackend.<strong>切入点2，这里需要针对华为
 <li>编译Utils，就是flateen_unflateen.cpp</li>
 </ol></li>
 <li>执行forward，计算损失
-<strong>切入点3，以下基本调用的都是pytorch的optimizer，这些需要pytorch有升腾支持，另外，DS提供的优化器也需要升腾支持</strong></li>
+<strong>切入点3，以下基本调用的都是pytorch的optimizer，这些需要pytorch有昇腾支持，另外，DS提供的优化器也需要昇腾支持</strong></li>
 <li>反向传播
 <ol type="1">
 <li>梯度累加</li>
