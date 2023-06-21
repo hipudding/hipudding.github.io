@@ -147,6 +147,200 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/21/Pytorch-DP%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
+      <meta itemprop="name" content="hipudding">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hipudding's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/21/Pytorch-DP%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Pytorch DP原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-21 15:50:59 / 修改时间：15:51:21" itemprop="dateCreated datePublished" datetime="2023-06-21T15:50:59+08:00">2023-06-21</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>DP(DataParallel)=数据并行，DP框架会将数据切片，然后模型拷贝，并在不同的backend上并行执行。<a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.DataParallel.html?highlight=data+parallel#torch.nn.DataParallel">官方手册说明</a></p>
+<h2 id="dp使用">DP使用</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">model = LinearModel()</span><br><span class="line">model = torch.nn.DataParallel(model,device_ids=[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>])</span><br><span class="line">criterion = torch.nn.MSELoss(size_average=<span class="literal">False</span>)</span><br><span class="line">optimizer = torch.optim.SGD(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    y_pred = model(x_data)</span><br><span class="line">    loss = criterion(y_pred, y_data)</span><br><span class="line">    </span><br><span class="line">    optimizer.zero_grad()</span><br><span class="line">    loss.backward()</span><br><span class="line">    optimizer.step()</span><br></pre></td></tr></table></figure>
+<p>从代码中看到，DP仅支持cuda，xpu或者昇腾，并不支持cpu。</p>
+<h2 id="dp原理">DP原理</h2>
+<h3 id="相关文件">相关文件</h3>
+<table>
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>文件</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>torch/nn/parallel/data_parallel.py</td>
+<td>DP类实现</td>
+</tr>
+<tr class="even">
+<td>torch/nn/parallel/_functions.py</td>
+<td>DP中使用的自定义autograd Function</td>
+</tr>
+<tr class="odd">
+<td>torch/nn/parallel/comm.py</td>
+<td>线程间数据传递接口，例如，gather,scatter等</td>
+</tr>
+<tr class="even">
+<td>torch/nn/parallel/replicate.py</td>
+<td>模型拷贝相关</td>
+</tr>
+<tr class="odd">
+<td>torch/nn/parallel/parallel_apply.py</td>
+<td>多线程执行模型</td>
+</tr>
+<tr class="even">
+<td>torch/nn/parallel/scatter_gather.py</td>
+<td>scatter和gather的封装</td>
+</tr>
+<tr class="odd">
+<td>torch/csrc/cuda/python_comm.cpp</td>
+<td>C语言实现的数据传递函数extension注册</td>
+</tr>
+<tr class="even">
+<td>torch/csrc/cuda/comm.cpp</td>
+<td>C语言的数据传递实现</td>
+</tr>
+</tbody>
+</table>
+<h3 id="基本原理">基本原理</h3>
+<p>DP基于单机多卡，所有的卡都参与训练。相对于非数据并行训练来说，DP会将一个batch数据切分为更小的batch，将数据复制到每一张计算的卡上，然后复制模型到所有的卡上，进行多线程执行，Forward计算完成后，会在device[0]上收集到一组预测值。device[0]计算loss，然后执行Backward计算梯度。（<strong>计算Backward没有看到创建线程的过程，单线程执行？？</strong>）</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/v2-5c5b0d8e3d7d6653a9ebd47bac93090c_720w.webp"
+alt="DP原理图" />
+<figcaption aria-hidden="true">DP原理图</figcaption>
+</figure>
+<h3 id="dp-wapper">DP wapper</h3>
+<p>回顾DP使用方法，参与数据并行的模型进需要使用DataParalle包一层即可。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">model = torch.nn.DataParallel(model,device_ids=[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>])</span><br></pre></td></tr></table></figure>
+<p>可以理解，下图就是上述代码的实现，DP就是在原本的模型执行之前增加了数据切分(Scatter)，模型复制(Broadcast)，然后将模型的并行执行结果进行合并(Gather)。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230621152641246.png"
+alt="image-20230621152641246" />
+<figcaption aria-hidden="true">image-20230621152641246</figcaption>
+</figure>
+<h3 id="数据传递">数据传递</h3>
+<p>DP的Forward函数核心代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, *inputs: <span class="type">Any</span>, **kwargs: <span class="type">Any</span></span>) -&gt; <span class="type">Any</span>:</span><br><span class="line">	    ...</span><br><span class="line">      <span class="comment"># 训练数据切分，并拷贝到每一个卡上</span></span><br><span class="line">      inputs, module_kwargs = self.scatter(inputs, kwargs, self.device_ids)</span><br><span class="line">      </span><br><span class="line">      ...</span><br><span class="line">      <span class="comment"># 模型数据拷贝到每一个卡上</span></span><br><span class="line">      replicas = self.replicate(self.module, self.device_ids[:<span class="built_in">len</span>(inputs)])</span><br><span class="line">      <span class="comment"># 每张卡启动一个线程执行，每个线程执行模型的forward函数</span></span><br><span class="line">      outputs = self.parallel_apply(replicas, inputs, module_kwargs)</span><br><span class="line">      <span class="comment"># 集合所有线程的预测结果</span></span><br><span class="line">      <span class="keyword">return</span> self.gather(outputs, self.output_device)</span><br></pre></td></tr></table></figure>
+<p>由于是单机单进程，所以数据的拷贝过程相对简单，以上述代码的scatter和broadcast为例，数据切分，然后将切分后的数据移动到指定设备上。但是Tensor还是在同一个数组中。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230621152351848.png"
+alt="image-20230621152351848" />
+<figcaption aria-hidden="true">image-20230621152351848</figcaption>
+</figure>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230621152441395.png"
+alt="image-20230621152441395" />
+<figcaption aria-hidden="true">image-20230621152441395</figcaption>
+</figure>
+<h3 id="自定义自动梯度方法">自定义自动梯度方法</h3>
+<p>Pytorch实现了自动梯度计算，除了官方实现的梯度计算之外，还能够自定义梯度计算方法，具体描述参考<a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/notes/extending.html#extending-torch-autograd">官方说明</a>。以下是代码中对Function类的使用举例说明：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Examples::</span><br><span class="line"></span><br><span class="line">    &gt;&gt;&gt; <span class="comment"># xdoctest: +REQUIRES(env:TORCH_DOCTEST_AUTOGRAD)</span></span><br><span class="line">    &gt;&gt;&gt; <span class="keyword">class</span> <span class="title class_">Exp</span>(<span class="title class_ inherited__">Function</span>):</span><br><span class="line">    &gt;&gt;&gt;     @<span class="built_in">staticmethod</span></span><br><span class="line">    &gt;&gt;&gt;     <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">ctx, i</span>):</span><br><span class="line">    &gt;&gt;&gt;         result = i.exp()</span><br><span class="line">    &gt;&gt;&gt;         ctx.save_for_backward(result)</span><br><span class="line">    &gt;&gt;&gt;         <span class="keyword">return</span> result</span><br><span class="line">    &gt;&gt;&gt;</span><br><span class="line">    &gt;&gt;&gt;     @<span class="built_in">staticmethod</span></span><br><span class="line">    &gt;&gt;&gt;     <span class="keyword">def</span> <span class="title function_">backward</span>(<span class="params">ctx, grad_output</span>):</span><br><span class="line">    &gt;&gt;&gt;         result, = ctx.saved_tensors</span><br><span class="line">    &gt;&gt;&gt;         <span class="keyword">return</span> grad_output * result</span><br><span class="line">    &gt;&gt;&gt;</span><br><span class="line">    &gt;&gt;&gt; <span class="comment"># Use it by calling the apply method:</span></span><br><span class="line">    &gt;&gt;&gt; <span class="comment"># xdoctest: +SKIP</span></span><br><span class="line">    &gt;&gt;&gt; output = Exp.apply(<span class="built_in">input</span>)</span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>实现自定义自动梯度方法，需要继承Function类，并实现forward和backward方法，并且这两个方法均是静态的。使用自定义自动梯度方法的时候，不应该调用forward，而是调用Exp.apply，这样会返回forward的结果。相当于自己定义了算子的前向和后向的处理方法。当在执行反向传播的时候，会按反顺序调用自定义自动梯度方法的backward方法。</p>
+<p>DP实现了三个自定义自动梯度方法，分别是Broadcast，Gather和Scatter，其反向传播方法内分别调用了Reduce_add，Scatter和Gather，即forward和backward中的动作是成对的。</p>
+<h3 id="训练流程">训练流程</h3>
+<p><strong>正向</strong></p>
+<ul>
+<li>①：将输入的一个batch切分成三个更小的batch</li>
+<li>②：将模型的参数复制三份，分别发送到三个device上</li>
+<li>③：启动三个线程，每个线程在不同的device上进行原始模型的前向计算</li>
+<li>④：将三个线程的输出结果拼接到一起</li>
+</ul>
+<p><strong>Loss</strong></p>
+<ul>
+<li>在device[0]上计算Loss</li>
+</ul>
+<p><strong>反向</strong></p>
+<ul>
+<li>④：将Loss切分，分别发送给对应的模型</li>
+<li>③：执行三个模型的backward方法，更新梯度（<strong>单线程？？？</strong>）</li>
+<li>②：将三个模型上的梯度相加，并储存到Original Module中</li>
+<li>①：将三个模型的梯度信息拼接到一起（<strong>这部分的数据其实没有使用？？？</strong>）</li>
+</ul>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230621144922423.png"
+alt="image-20230621144922423" />
+<figcaption aria-hidden="true">image-20230621144922423</figcaption>
+</figure>
+<h3 id="官方建议">官方建议</h3>
+<ol type="1">
+<li>不建议使用DP来进行数据并行，因为这不是一个真正的并发执行（python
+GIL），并且，由于数据的转移，反而会减慢模型的执行，建议使用DDP。</li>
+<li>所有拷贝来的数据都是一次性的，每次迭代后都会销毁重建，所以这些模型上如果有数据修改，将不会持久化。（<strong>那input是不是也是一次性的？那input上就没有必要再Gather梯度了？？？</strong>）</li>
+</ol>
+<h2 id="参考">参考</h2>
+<p><a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/torch.nn.DataParallel.html?highlight=data+parallel#torch.nn.DataParallel">Pytorch
+DATAPARALLEL</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/notes/extending.html#extending-torch-autograd">Extending
+torch.autograd</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/343951042">PyTorch 源码解读之
+DP &amp; DDP：模型并行和分布式训练解析</a></p>
+<p><a
+target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/187610959">[原创][深度][PyTorch]
+DDP系列第二篇：实现原理与源代码解析</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/13/MPI%E5%85%A5%E9%97%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -848,7 +1042,7 @@ target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">5</span>
+          <span class="site-state-item-count">6</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
