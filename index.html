@@ -178,7 +178,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-06-25 15:14:09" itemprop="dateModified" datetime="2023-06-25T15:14:09+08:00">2023-06-25</time>
+                <time title="修改时间：2023-06-26 10:15:22" itemprop="dateModified" datetime="2023-06-26T10:15:22+08:00">2023-06-26</time>
               </span>
 
           
@@ -269,9 +269,9 @@ alt="image-20230621152641246" />
 <p>由于是单机单进程，所以数据的拷贝过程相对简单，以上述代码的scatter和broadcast为例，数据切分，然后将切分后的数据移动到指定设备上。但是Tensor还是在同一个数组中。</p>
 <figure>
 <img
-src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230621152351848.png"
-alt="image-20230621152351848" />
-<figcaption aria-hidden="true">image-20230621152351848</figcaption>
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230626101410741.png"
+alt="image-20230626101410741" />
+<figcaption aria-hidden="true">image-20230626101410741</figcaption>
 </figure>
 <figure>
 <img
@@ -302,8 +302,9 @@ target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/notes/exten
 <li>④：将Loss切分，分别发送给对应的模型</li>
 <li>③：执行三个模型的backward方法，更新梯度（<strong>Backward
 Engine多线程处理</strong>）</li>
-<li>②：将三个模型上的梯度相加，并储存到Original Module中</li>
-<li>①：将三个模型的梯度信息拼接到一起（<strong>这部分的数据其实没有使用？？？</strong>）</li>
+<li>②：将三个模型上的梯度相加，并储存到Original
+Module中（<strong>直接相加？</strong>）</li>
+<li>①：将三个模型的梯度信息拼接到一起</li>
 </ul>
 <figure>
 <img
@@ -315,7 +316,7 @@ alt="image-20230621144922423" />
 <ol type="1">
 <li>不建议使用DP来进行数据并行，因为这不是一个真正的并发执行（python
 GIL），并且，由于数据的转移，反而会减慢模型的执行，建议使用DDP。</li>
-<li>所有拷贝来的数据都是一次性的，每次迭代后都会销毁重建，所以这些模型上如果有数据修改，将不会持久化。（<strong>那input是不是也是一次性的？那input上就没有必要再Gather梯度了？？？</strong>）</li>
+<li>所有拷贝来的数据都是一次性的，每次迭代后都会销毁重建，所以这些模型上如果有数据修改，将不会持久化。（<strong>Input最后做的gather是为了下一层网络的输入</strong>）</li>
 </ol>
 <h2 id="参考">参考</h2>
 <p><a
