@@ -147,6 +147,148 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/29/Pytorch-DDP%E5%8E%9F%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
+      <meta itemprop="name" content="hipudding">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hipudding's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/06/29/Pytorch-DDP%E5%8E%9F%E7%90%86/" class="post-title-link" itemprop="url">Pytorch DDP原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-06-29 17:10:02 / 修改时间：17:10:48" itemprop="dateCreated datePublished" datetime="2023-06-29T17:10:02+08:00">2023-06-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>DDP=分布式数据并行(DISTRIBUTED DATA
+PARALLEL)，和DP一样也是一种数据并行的方法，详细文档可以参考<a
+target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/notes/ddp.html">官方手册</a></p>
+<h2 id="ddp使用">DDP使用</h2>
+<p>以下是使用NPU进行2个节点并行的示例代码。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch_npu</span><br><span class="line"><span class="keyword">import</span> torch.distributed <span class="keyword">as</span> dist</span><br><span class="line"><span class="keyword">import</span> torch.multiprocessing <span class="keyword">as</span> mp</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> torch.optim <span class="keyword">as</span> optim</span><br><span class="line"><span class="keyword">from</span> torch.nn.parallel <span class="keyword">import</span> DistributedDataParallel <span class="keyword">as</span> DDP</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">example</span>(<span class="params">rank, world_size</span>):</span><br><span class="line">    torch.npu.set_device(rank)</span><br><span class="line">    device = torch.device(<span class="string">&#x27;npu&#x27;</span>)</span><br><span class="line">    <span class="comment"># create default process group</span></span><br><span class="line">    dist.init_process_group(<span class="string">&quot;hccl&quot;</span>, rank=rank, world_size=world_size)</span><br><span class="line">    <span class="comment"># create local model</span></span><br><span class="line">    model = nn.Linear(<span class="number">10</span>, <span class="number">10</span>).to(device)</span><br><span class="line">    <span class="comment"># construct DDP model</span></span><br><span class="line">    ddp_model = DDP(model, device_ids=[rank])</span><br><span class="line">    <span class="comment"># define loss function and optimizer</span></span><br><span class="line">    loss_fn = nn.MSELoss()</span><br><span class="line">    optimizer = optim.SGD(ddp_model.parameters(), lr=<span class="number">0.001</span>)</span><br><span class="line">    <span class="comment"># forward pass</span></span><br><span class="line">    outputs = ddp_model(torch.randn(<span class="number">20</span>, <span class="number">10</span>).to(device))</span><br><span class="line">    labels = torch.randn(<span class="number">20</span>, <span class="number">10</span>).to(device)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># backward pass</span></span><br><span class="line">    loss = loss_fn(outputs, labels)</span><br><span class="line">    loss.backward()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># update parameters</span></span><br><span class="line">    optimizer.step()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>():</span><br><span class="line">    world_size = <span class="number">2</span></span><br><span class="line">    mp.spawn(example,</span><br><span class="line">        args=(world_size,),</span><br><span class="line">        nprocs=world_size,</span><br><span class="line">        join=<span class="literal">True</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__==<span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># Environment variables which need to be</span></span><br><span class="line">    <span class="comment"># set when using c10d&#x27;s default &quot;env&quot;</span></span><br><span class="line">    <span class="comment"># initialization mode.</span></span><br><span class="line">    os.environ[<span class="string">&quot;MASTER_ADDR&quot;</span>] = <span class="string">&quot;localhost&quot;</span></span><br><span class="line">    os.environ[<span class="string">&quot;MASTER_PORT&quot;</span>] = <span class="string">&quot;29500&quot;</span></span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
+<h2 id="ddp原理">DDP原理</h2>
+<h3 id="相关文件">相关文件</h3>
+<table>
+<colgroup>
+<col style="width: 57%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>文件</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>torch/nn/parallel/distributed.py</td>
+<td>DistributedDataParallel类实现</td>
+</tr>
+<tr class="even">
+<td>torch/csrc/distributed/c10d/reducer.cpp</td>
+<td>DDP reduce类实现文件</td>
+</tr>
+<tr class="odd">
+<td>torch/csrc/distributed/c10d/reducer.hpp</td>
+<td>DDP reduce接口文件</td>
+</tr>
+<tr class="even">
+<td>torch/csrc/distributed/c10d/init.cpp</td>
+<td>python C插件注册文件</td>
+</tr>
+</tbody>
+</table>
+<h3 id="进程交互">进程交互</h3>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230629163126602.png"
+alt="image-20230629163126602" />
+<figcaption aria-hidden="true">image-20230629163126602</figcaption>
+</figure>
+<ul>
+<li>主线程通过torch.multiprocessing，fork出新的进程，满足word_size的要求，然后各个线程独立运行，主进程将自己的host和port放到环境变量中共子进程使用。</li>
+<li>各个进程<strong><font color='orange'>初始化process
+group</font></strong>，这些进程属于同一个进程组。</li>
+<li>每个进程分别创建模型，DDP对象，定义loss函数和优化器。</li>
+<li>创建DDP对象时，主进程会<strong><font color="red">同步模型参数</font></strong>，这一步完成后，各个进程的模型一致。</li>
+<li>每个模型输入部分数据，这些数据需要调用者自行分割，可以使用DistributedSampler。</li>
+<li>然后执行模型的训练过程，每次backward执行完后，调用注册的reducer
+hook函数，做<strong><font color='green'>梯度聚合</font></strong>。</li>
+</ul>
+<h3 id="reducer">Reducer</h3>
+<p>普通模型的DDP，除了每次反向执行后的梯度同步之外，进程之间没有其他通信的需求。DDP构造时，会在每个模型参数上配置回调函数(autograd_hook)，当参数的梯度计算完成后，会调用这个回调函数。为了能够一边计算，一边同步梯度数据，DDP将相邻参数分组，每个组叫一个bucket。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/72401724-d296d880-371a-11ea-90ab-737f86543df9.png"
+alt="ddp_grad_sync.png" />
+<figcaption aria-hidden="true">ddp_grad_sync.png</figcaption>
+</figure>
+<p>这是参数分组和allreduce的官方示意图，回调函数的执行流程如下：</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230629170221846.png"
+alt="image-20230629170221846" />
+<figcaption aria-hidden="true">image-20230629170221846</figcaption>
+</figure>
+<ul>
+<li>每个参数梯度计算完成后，均会调用回调函数，该回调函数会将参数标记为ready。</li>
+<li>然后检查bucket中的pending是否为0，也就是bucket的参数是否全部完成梯度计算，如果完成，则准备进行一步all
+reduce。</li>
+<li>all
+reduce是一个异步方法，任务执行后不阻塞，继续执行。（如果某个进程的当前bucket没有执行完成，dist
+backend会等待，执行完成后异步返回）。</li>
+<li>当所有的bucket都发起all reduce后，等待每个bucket的all
+reduce结果，所有结果都返回后，完成本次backward。</li>
+</ul>
+<h2 id="参考">参考</h2>
+<p><a target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/notes/ddp.html">DISTRIBUTED
+DATA PARALLEL</a> <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/187610959">原创
+深度 PyTorch DDP系列第二篇：实现原理与源代码解析</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/21/Pytorch-DP%E5%8E%9F%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1056,7 +1198,7 @@ target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
