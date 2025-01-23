@@ -168,7 +168,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2025-01-23 11:39:15 / 修改时间：15:10:33" itemprop="dateCreated datePublished" datetime="2025-01-23T11:39:15+08:00">2025-01-23</time>
+      <time title="创建时间：2025-01-23 11:39:15 / 修改时间：15:17:18" itemprop="dateCreated datePublished" datetime="2025-01-23T11:39:15+08:00">2025-01-23</time>
     </span>
 
   
@@ -324,14 +324,14 @@ defaults to <code>None</code> which is <code>cwd()</code></li>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/3d5d171ad6df43c2babfe981a2ee91e8.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
+alt="蒙特卡洛法" />
+<figcaption aria-hidden="true">蒙特卡洛法</figcaption>
 </figure>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/4f050b95b2c1439baa33a66de817e659.jpeg"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
+alt="蒙特卡洛法" />
+<figcaption aria-hidden="true">蒙特卡洛法</figcaption>
 </figure>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line"><span class="comment"># 初始化 Ray</span></span><br><span class="line">ray.init()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 单个任务：生成点并统计圆内点数</span></span><br><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">count_points_in_circle</span>(<span class="params">num_samples: <span class="built_in">int</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_samples):</span><br><span class="line">        x, y = random.uniform(<span class="number">0</span>, <span class="number">1</span>), random.uniform(<span class="number">0</span>, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> x**<span class="number">2</span> + y**<span class="number">2</span> &lt;= <span class="number">1</span>:</span><br><span class="line">            count += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> count</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">calculate_pi</span>(<span class="params">num_samples: <span class="built_in">int</span>, num_workers: <span class="built_in">int</span></span>) -&gt; <span class="built_in">float</span>:</span><br><span class="line">    <span class="comment"># 每个 worker 分配的样本数</span></span><br><span class="line">    samples_per_worker = num_samples // num_workers</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 创建并运行任务</span></span><br><span class="line">    futures = [</span><br><span class="line">        count_points_in_circle.remote(samples_per_worker) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(num_workers)</span><br><span class="line">    ]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 收集结果</span></span><br><span class="line">    total_in_circle = <span class="built_in">sum</span>(ray.get(futures))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算圆周率</span></span><br><span class="line">    pi_estimate = <span class="number">4</span> * total_in_circle / num_samples</span><br><span class="line">    <span class="keyword">return</span> pi_estimate</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="comment"># 总样本数和并行任务数</span></span><br><span class="line">    total_samples = <span class="number">100_000_000</span></span><br><span class="line">    num_workers = <span class="number">10</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 计算 π</span></span><br><span class="line">    pi = calculate_pi(total_samples, num_workers)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Estimated π: <span class="subst">&#123;pi&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 关闭 Ray</span></span><br><span class="line">    ray.shutdown()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <h3 id="临时启动">临时启动</h3>
@@ -354,8 +354,8 @@ target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/cluster/metri
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121190550385.png"
-alt="image-20250121190550385" />
-<figcaption aria-hidden="true">image-20250121190550385</figcaption>
+alt="普罗米修斯dashboard" />
+<figcaption aria-hidden="true">普罗米修斯dashboard</figcaption>
 </figure>
 <p><strong>grafana</strong></p>
 <p>普罗米修斯采集的数据，通过grafana的方式进行可视化显示，并且ray
@@ -367,8 +367,8 @@ target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/cluster/metri
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121191218231.png"
-alt="image-20250121191218231" />
-<figcaption aria-hidden="true">image-20250121191218231</figcaption>
+alt="grafana dashboard" />
+<figcaption aria-hidden="true">grafana dashboard</figcaption>
 </figure>
 <p><strong>Ray dashboard</strong></p>
 <p>完成上述两个步骤后，Ray
@@ -379,34 +379,34 @@ dashboard中的metric即可正常显示，如果不是本机部署，你可能�
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121191317452.png"
-alt="image-20250121191317452" />
-<figcaption aria-hidden="true">image-20250121191317452</figcaption>
+alt="Ray dashboard" />
+<figcaption aria-hidden="true">Ray dashboard</figcaption>
 </figure>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121191504505.png"
-alt="image-20250121191504505" />
-<figcaption aria-hidden="true">image-20250121191504505</figcaption>
+alt="Ray dashboard" />
+<figcaption aria-hidden="true">Ray dashboard</figcaption>
 </figure>
 <h3 id="提交一个任务">提交一个任务</h3>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python pi.py</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#2025-01-21 11:17:11,760 INFO worker.py:1654 -- Connecting to existing Ray cluster at address: 192.168.64.8:6379...</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#2025-01-21 11:17:11,775 INFO worker.py:1832 -- Connected to Ray cluster. View the dashboard at 192.168.64.8:8265</span></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#Estimated π: 3.36</span></span></span><br></pre></td></tr></table></figure>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121191829305.png"
-alt="image-20250121191829305" />
-<figcaption aria-hidden="true">image-20250121191829305</figcaption>
+alt="Ray 任务列表" />
+<figcaption aria-hidden="true">Ray 任务列表</figcaption>
 </figure>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121191902742.png"
-alt="image-20250121191902742" />
-<figcaption aria-hidden="true">image-20250121191902742</figcaption>
+alt="Ray 任务详情" />
+<figcaption aria-hidden="true">Ray 任务详情</figcaption>
 </figure>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121191917649.png"
-alt="image-20250121191917649" />
-<figcaption aria-hidden="true">image-20250121191917649</figcaption>
+alt="Ray 任务详情" />
+<figcaption aria-hidden="true">Ray 任务详情</figcaption>
 </figure>
 <h3 id="部署一个服务">部署一个服务</h3>
 <p>Ray除了提供基础的分布式计算能力之外，还提供了一系列的AI
@@ -420,14 +420,14 @@ target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/serve/getting
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121192836367.png"
-alt="image-20250121192836367" />
-<figcaption aria-hidden="true">image-20250121192836367</figcaption>
+alt="Ray Serve详情" />
+<figcaption aria-hidden="true">Ray Serve详情</figcaption>
 </figure>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250121192851056.png"
-alt="image-20250121192851056" />
-<figcaption aria-hidden="true">image-20250121192851056</figcaption>
+alt="Ray Serve metrics" />
+<figcaption aria-hidden="true">Ray Serve metrics</figcaption>
 </figure>
 <p>通过curl命令可以验证服务运行情况：</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://127.0.0.1:8000/ -H &quot;Content-Type: application/json&quot; -d &#x27;&quot;Hello world!&quot;&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#Bonjour monde!</span></span></span><br></pre></td></tr></table></figure>
@@ -459,8 +459,8 @@ ray/python/ray/core/src/ray/下。</p>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/landing-2.svg"
-alt="Concept Diagram" />
-<figcaption aria-hidden="true">Concept Diagram</figcaption>
+alt="gRPC原理" />
+<figcaption aria-hidden="true">gRPC原理</figcaption>
 </figure>
 <p>Ray是基于gRPC构建的分布式计算系统，有关gRPC的代码存放在
 ray/src/ray/rpc目录下，下面，我们通过worker进程的gRPC服务来分析。</p>
@@ -470,8 +470,8 @@ ray/src/ray/rpc目录下，下面，我们通过worker进程的gRPC服务来分�
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/20250122145957615.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
+alt="gRPC client类图" />
+<figcaption aria-hidden="true">gRPC client类图</figcaption>
 </figure>
 <p><code>ClientCall</code>是对RPC调用的一个封装，主要包括需要调用的stub函数指针，以及相关的状态和结果获取，当gRPC调用返回时，需要回调<code>ClientCall</code>中注册的回调函数。<code>ClientCallManager</code>是对gRPC调用发起的管理，包括结果队列，监听线程等，
 <code>GrpcClient</code>保存的是gRPC的连接句柄，可以通过该对象发起一个gRPC请求。</p>
@@ -480,8 +480,8 @@ alt="img" />
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250122142401278.png"
-alt="image-20250122142401278" />
-<figcaption aria-hidden="true">image-20250122142401278</figcaption>
+alt="CoreWorkerClient 类图" />
+<figcaption aria-hidden="true">CoreWorkerClient 类图</figcaption>
 </figure>
 <p><code>CoreWorkerClientPool</code>维护一个map&lt;WorkerId,
 CoreWorkerClient&gt;，当已经存在对应的<code>CoreWorkerClient</code>时直接取出使用。如果不存在，则调用<code>CoreWorkerClientFactoryFn</code>工厂方法创建一个gRPC的client连接。该工厂方法在<code>CoreWorker</code>的构造函数中定义，通过一个<code>rpc::Address</code>创建对应的<code>CoreWorkerClient</code>对象。</p>
@@ -492,16 +492,16 @@ CoreWorkerClient&gt;，当已经存在对应的<code>CoreWorkerClient</code>时�
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/20250122145823773.png"
-alt="img" />
-<figcaption aria-hidden="true">img</figcaption>
+alt="gPRC Server类图" />
+<figcaption aria-hidden="true">gPRC Server类图</figcaption>
 </figure>
 <p><code>GrpcServer</code>是gRPC的服务端，其中定义了初始化，关闭，注册服务，运行等操作。它会根据其中注册的Service来向gRPC服务中注册服务和对应的处理方法。<code>GrpcService</code>是一个虚拟类，其本身没有实现，需要不同的组件来继承实现，例如，CoreWorker就会用<code>CoreWorkerGrpcService</code>来实现一个Worker对应的Service。Service中需要提供一组<code>ServiceCallFactory</code>，这些Factory记录了服务，gRPC的stub，回调函数，本地异步IO组件等信息，供<code>GrpcServer</code>来注册对应的服务。<code>ServiceCall</code>即服务端服务的本身，包括一系列回调函数处理对应的事件，这个call对象会以Tag的方式放入gRPC请求中，处理时取出call对象对相应的处理。</p>
 <p>对于CoreWorker来说，需要基于<code>GrpcService</code>实现<code>GrpcCoreWorkerGrpcService</code>（<code>work/core_worker_server.h</code>）。实际上的工作就是将CoreWorkerService中的服务全部注册到ServiceCallFactory中。</p>
 <figure>
 <img
 src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250122152145818.png"
-alt="image-20250122152145818" />
-<figcaption aria-hidden="true">image-20250122152145818</figcaption>
+alt="CoreWorkerService 类图" />
+<figcaption aria-hidden="true">CoreWorkerService 类图</figcaption>
 </figure>
 <p><code>CoreWorkerServiceHandler</code>是一组Handle方法的集合，包含CoreWorkerService中的所有服务的处理方法，<code>CoreWorkerGrpcService</code>中会通过一组宏来构造protobuf中的注册，响应等必要信息的对象集合（ServiceCallFactory）。</p>
 <p>注册完成后，<code>GrpcServer</code>在运行之前，会将所有的事件和响应注册到队列中，这样，队列中进入事件时，就可以调用对应的处理函数进行处理。</p>
