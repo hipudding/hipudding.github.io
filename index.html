@@ -3961,6 +3961,160 @@ alt="image-20231116102541095" />
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/12/OpenCV%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E9%AB%98%E9%A2%91%E6%8E%A5%E5%8F%A3%E6%96%B0%E5%A2%9E%E6%98%87%E8%85%BE%E6%94%AF%E6%8C%81-%E4%B8%8A%E7%BA%BF%E6%98%87%E8%85%BECI%E6%9C%8D%E5%8A%A1%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
+      <meta itemprop="name" content="hipudding">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/12/12/OpenCV%E5%9B%BE%E5%83%8F%E5%A4%84%E7%90%86%E9%AB%98%E9%A2%91%E6%8E%A5%E5%8F%A3%E6%96%B0%E5%A2%9E%E6%98%87%E8%85%BE%E6%94%AF%E6%8C%81-%E4%B8%8A%E7%BA%BF%E6%98%87%E8%85%BECI%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="post-title-link" itemprop="url">OpenCV图像处理高频接口新增昇腾支持&上线昇腾CI服务器</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-12-12 15:42:41" itemprop="dateCreated datePublished" datetime="2023-12-12T15:42:41+08:00">2023-12-12</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-23 15:43:00" itemprop="dateModified" datetime="2025-01-23T15:43:00+08:00">2025-01-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20231205091902226.png"
+alt="LOGO" />
+<figcaption aria-hidden="true">LOGO</figcaption>
+</figure>
+<p>在当今数字化时代，图像处理不再是一个陌生的领域，而是推动科学、技术和创新的引擎。OpenCV（开源计算机视觉库）凭借其丰富、强大的功能和灵活性在图像处理领域占据引领者地位。为了进一步加速OpenCV图像处理，即将推出的<a
+target="_blank" rel="noopener" href="https://github.com/opencv/opencv">OpenCV</a>
+4.9.0版本提供了图像处理相关的高频使用接口的<a
+target="_blank" rel="noopener" href="https://www.hiascend.com">昇腾（Ascend）</a>支持。这意味着在计算机视觉领域的数据预处理和后处理流程中，可以充分发挥昇腾软硬件的强大算力和计算效率，加速图像处理操作。</p>
+<p>除此之外，2023年10月17日，OpenCV社区正式接纳昇腾+<a
+target="_blank" rel="noopener" href="https://www.openeuler.org/">openEuler</a>作为持续集成（Continuous
+Integration，CI）系统的操作系统之一，这意味着未来OpenCV的代码修改均会在昇腾+openEuler环境中进行自动化构建及测试，保障了OpenCV在openEuler上支持的稳定性。</p>
+<h2 id="图像处理昇腾接口使用">图像处理昇腾接口使用</h2>
+<p>本次提供的以昇腾为后端的图像处理接口封装在<a
+target="_blank" rel="noopener" href="https://github.com/opencv/opencv_contrib">OpenCV扩展包(contrib)</a>的cannops模块中，包括图像矩阵的算术运算，通道拆分合并，图片裁剪，翻转，调整大小，转置等图像处理的Python和C++接口，处理精度与CPU后端的计算结果相同。</p>
+<p>那么如何调用昇腾后端实现图像处理呢？除了对昇腾必要的初始化、去初始化之外，用户无需学习<a
+target="_blank" rel="noopener" href="https://www.hiascend.com/zh/software/cann">CANN</a>
+API，仅需要将原来的接口添加cann包名（C++接口为使用cann命名空间），即可使用昇腾算力：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"></span><br><span class="line"><span class="comment"># cann初始化</span></span><br><span class="line">cv2.cann.initAcl()</span><br><span class="line"><span class="comment"># 选择执行运算的设备编号</span></span><br><span class="line">cv2.cann.setDevice(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 图像处理（以图像旋转为例）</span></span><br><span class="line">img = cv2.imread(<span class="string">&#x27;/path/to/image&#x27;</span>)</span><br><span class="line"><span class="comment"># 添加cann包名调用昇腾接口</span></span><br><span class="line">ret = cv2.cann.rotate(img, <span class="number">0</span>)</span><br><span class="line">cv2.imwrite(<span class="string">&#x27;/path/to/result&#x27;</span>, ret)</span><br><span class="line"></span><br><span class="line"><span class="comment"># cann去初始化</span></span><br><span class="line">cv2.cann.finalizeAcl()</span><br></pre></td></tr></table></figure>
+<center>
+昇腾接口使用方法
+</center>
+<p>详细<a
+target="_blank" rel="noopener" href="https://docs.opencv.org/4.x/d9/d56/tutorial_ascend_npu_image_processing.html">示例代码</a>和<a
+target="_blank" rel="noopener" href="https://docs.opencv.org/4.x/d6/df4/group__cannops.html">接口列表</a>请参考OpenCV<a
+target="_blank" rel="noopener" href="https://docs.opencv.org/4.x/index.html">官方文档</a>。</p>
+<h2 id="opencv官方支持昇腾ci">OpenCV官方支持昇腾CI</h2>
+<p>OpenCV社区正式接纳昇腾+<a
+target="_blank" rel="noopener" href="https://www.openeuler.org/">openEuler</a>作为持续集成（Continuous
+Integration，CI）系统的操作系统之一，对昇腾和openEuler提供上游原生支持，给广大OpenCV及昇腾用户提供了稳定性保障。让我们跟随下面两个问题，了解昇腾CI是如何维护稳定性的。</p>
+<p><strong>持续集成做了什么</strong>？</p>
+<p>CI提供了一个高效、自动化的开发环境，在开发者提交代码后，会触发一系列自动构建及测试，以确保软件系统的稳定性和质量。持续集成系统不仅缩短了开发周期，也为开发者提供了更快速、可靠的反馈机制，从而推动了软件开发的创新和进步。</p>
+<p><strong>OpenCV支持昇腾CI意味着什么？</strong></p>
+<p>未来OpenCV社区的代码提交将会在昇腾CI环境下自动化构建和测试，有助于确保OpenCV在昇腾上的稳定性和性能。同时为后续OpenCV的昇腾相关贡献代码的提交提供了稳定可靠的测试平台，有助于推动OpenCV+昇腾的蓬勃发展。感谢OpenCV和华为计算团队的共同努力。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20231124150817615.png"
+alt="OpenCV社区CI的昇腾支持" />
+<figcaption aria-hidden="true">OpenCV社区CI的昇腾支持</figcaption>
+</figure>
+<center>
+OpenCV社区CI的昇腾支持
+</center>
+<h2 id="opencv简介">OpenCV简介</h2>
+<p>OpenCV是一个开源的跨平台计算机视觉库，提供了图像处理，机器学习，视频分析等功能，支持多种开发语言，多平台和多类型后端。
+其中图像处理模块提供了矩阵的算术和逻辑运算，图像处理，视频编解码等，被广泛运用于计算机视觉领域的数据预处理和后处理。</p>
+<p>除了图像处理模块，OpenCV
+DNN模块已经在2022年12月支持了昇腾作为推理后端，支持读取包括ONNX，TensorFLow，Caffeine，Darknet在内的多种主流格式的深度网络模型，并支持在多平台，多设备中运行，目前已经达到了主流神经网络推理框架的性能。在昇腾算力的加持下，推理性能进一步提升，<a
+target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/nqjUrrxofcjjg82ne144SQ">3毫秒即可完成ResNet50推理</a>。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/2261701741068_.pic.jpg"
+alt="OpenCV架构示意图" />
+<figcaption aria-hidden="true">OpenCV架构示意图</figcaption>
+</figure>
+<center>
+OpenCV架构示意图
+</center>
+<h2 id="cann简介">CANN简介</h2>
+<p>CANN是华为推出的异构计算架构，是上层应用调用底层昇腾处理器的桥梁，在本次OpenCV昇腾支持中是至关重要的一层。同时，昇腾+CANN支持昇思MindSpore，OpenCV
+DNN、PyTorch、TensorFlow、飞桨、ONNX等多种深度学习框架，以极致性能、极简开发、开放生态为目标，助力昇腾构建全场景人工智能平台。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20231122144232937.png"
+alt="CANN AI异构计算框架" />
+<figcaption aria-hidden="true">CANN AI异构计算框架</figcaption>
+</figure>
+<center>
+CANN AI异构计算框架
+</center>
+<h2 id="结语">结语</h2>
+<p>未来OpenCV会进一步完善能使用昇腾后端的接口，并持续优化接口性能，进一步发挥昇腾算力性能，提升用户体验。</p>
+<p>目前，用户需要自行编译OpenCV最新代码才能体验到接口的昇腾支持，编译方法可以参考OpenCV
+wiki中提供的<a
+target="_blank" rel="noopener" href="https://github.com/opencv/opencv/wiki/Huawei-CANN-Backend">详细指导</a>，由于cannops模块在OpenCV扩展包中，编译还需要下载扩展包源码以及配置扩展包的保存路径:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ git <span class="built_in">clone</span> https://github.com/opencv/opencv_contrib.git</span><br><span class="line">$ <span class="built_in">cd</span> &lt;opencv_build_directory&gt;</span><br><span class="line">$ cmake -DOPENCV_EXTRA_MODULES_PATH=&lt;opencv_contrib&gt;/modules &lt;opencv_source_directory&gt;</span><br><span class="line">$ make -j5</span><br></pre></td></tr></table></figure>
+<p>如果大家在使用上遇到任何问题，欢迎反馈到OpenCV扩展包GitHub仓库的<a
+target="_blank" rel="noopener" href="https://github.com/opencv/opencv_contrib/issues">Issues</a>页面，我们会及时为大家解决问题。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/12/AscendC-vs-CUDA/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -4600,127 +4754,6 @@ DP &amp; DDP：模型并行和分布式训练解析</a></p>
 <p><a
 target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/187610959">[原创][深度][PyTorch]
 DDP系列第二篇：实现原理与源代码解析</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/13/mpi%E5%85%A5%E9%97%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
-      <meta itemprop="name" content="hipudding">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="hipudding's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | hipudding's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/13/mpi%E5%85%A5%E9%97%A8/" class="post-title-link" itemprop="url">mpi入门</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-06-13 16:32:00" itemprop="dateCreated datePublished" datetime="2023-06-13T16:32:00+08:00">2023-06-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-06-21 15:59:43" itemprop="dateModified" datetime="2023-06-21T15:59:43+08:00">2023-06-21</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>MPI全称叫做<a
-target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A8%8A%E6%81%AF%E5%82%B3%E9%81%9E%E4%BB%8B%E9%9D%A2">消息传递接口</a>（Message
-passing interface）</p>
-<h2 id="安装mpi4py">安装mpi4py</h2>
-<p>Python可以使用<a
-target="_blank" rel="noopener" href="https://github.com/mpi4py/mpi4py">mpi4py库</a>，使用pip安装的话需要提前安装好openmpi库：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libopenmpi-dev</span><br></pre></td></tr></table></figure>
-<p>由于Anaconda存在的缘故，pip安装编译会报找不到一些so库。解决方法见<a
-target="_blank" rel="noopener" href="https://github.com/mpi4py/mpi4py/issues/343">issue</a></p>
-<p>不过既然Anaconda存在，可以直接使用conda安装：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">conda install -c conda-forge mpi4py openmpi</span><br></pre></td></tr></table></figure>
-<h2 id="名词介绍">名词介绍</h2>
-<ul>
-<li>world: 一个进程组，聚集通信在这个进程组中进行</li>
-<li>rank: 当前进程（自己）的编号，0是master进程</li>
-<li>world_size: 进程组中进程的个数</li>
-</ul>
-<h2 id="点对点通信">点对点通信</h2>
-<p><strong>举例</strong></p>
-<ul>
-<li>send(isend 非阻塞)</li>
-<li>recv(irecv 非阻塞)</li>
-</ul>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mpi4py <span class="keyword">import</span> MPI</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">comm = MPI.COMM_WORLD</span><br><span class="line">rank = comm.Get_rank()</span><br><span class="line">size = comm.Get_size()</span><br><span class="line"></span><br><span class="line">recv_data = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    matrix = np.random.randint(-<span class="number">9</span>, <span class="number">9</span>, size=(<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">    comm.send(matrix, <span class="number">1</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; send matrix &#123;&#125; to other processes&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    matrix_recv = comm.recv()</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; recv matrix &#123;&#125; from master&quot;</span>.<span class="built_in">format</span>(rank, matrix_recv))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">mpiexec -np 2 python mpi_test.py </span><br><span class="line"></span><br><span class="line">process 1 recv matrix </span><br><span class="line">[[ 0  1 -7  3 -7 -1 -2  2 -3  7]</span><br><span class="line"> [ 2 -6  7  4 -5 -1  0 -4  2  4]</span><br><span class="line"> [ 0  1  3  5  8 -3 -8 -4 -3 -7]</span><br><span class="line"> [ 1 -9 -8  5 -9 -7 -7 -6 -6 -2]</span><br><span class="line"> [-2  3 -3 -4  3  7  0  2  7  8]</span><br><span class="line"> [-3 -6 -4 -5 -5 -1  2 -3 -9  3]</span><br><span class="line"> [-6  6  5  4 -5  8 -2 -2  3  6]</span><br><span class="line"> [ 1  7 -6 -7  0 -2  8  4  7 -6]</span><br><span class="line"> [-2 -7 -5 -4 -9  0 -3  8 -2  7]</span><br><span class="line"> [-3  2  2  6  0 -8 -5  0 -4  5]] from master</span><br><span class="line"> </span><br><span class="line">process 0 send matrix </span><br><span class="line">[[ 0  1 -7  3 -7 -1 -2  2 -3  7]</span><br><span class="line"> [ 2 -6  7  4 -5 -1  0 -4  2  4]</span><br><span class="line"> [ 0  1  3  5  8 -3 -8 -4 -3 -7]</span><br><span class="line"> [ 1 -9 -8  5 -9 -7 -7 -6 -6 -2]</span><br><span class="line"> [-2  3 -3 -4  3  7  0  2  7  8]</span><br><span class="line"> [-3 -6 -4 -5 -5 -1  2 -3 -9  3]</span><br><span class="line"> [-6  6  5  4 -5  8 -2 -2  3  6]</span><br><span class="line"> [ 1  7 -6 -7  0 -2  8  4  7 -6]</span><br><span class="line"> [-2 -7 -5 -4 -9  0 -3  8 -2  7]</span><br><span class="line"> [-3  2  2  6  0 -8 -5  0 -4  5]] to other processes</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="聚集通信">聚集通信</h2>
-<p><strong>举例</strong></p>
-<ul>
-<li><p>bcast</p></li>
-<li><p>scatter</p></li>
-<li><p>gather(all_gather所有的进程均收到gather结果)</p></li>
-<li><p>reduce(all_reduce所有的进程均收到reduce结果)</p></li>
-</ul>
-<p><strong>bcast</strong>
-广播消息到所有进程组内进程，调用者如果是master，则是发送；其他进程是接收</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mpi4py <span class="keyword">import</span> MPI</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">comm = MPI.COMM_WORLD</span><br><span class="line">rank = comm.Get_rank()</span><br><span class="line">size = comm.Get_size()</span><br><span class="line"></span><br><span class="line">recv_data = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    matrix = np.random.randint(-<span class="number">9</span>, <span class="number">9</span>, size=(<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; prepare random matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    matrix = np.zeros((<span class="number">10</span>, <span class="number">10</span>), dtype=<span class="built_in">int</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; use empty matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br><span class="line">matrix = comm.bcast(matrix)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; bcast matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br></pre></td></tr></table></figure>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">process 1 use empty matrix [[0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]</span><br><span class="line"> [0 0 0 0 0 0 0 0 0 0]]</span><br><span class="line"> </span><br><span class="line">process 0 prepare random matrix [[ 5 -8  8  4  1 -7 -8 -6  1  3]</span><br><span class="line"> [-6 -5  6 -1 -8  5  7  2  3  7]</span><br><span class="line"> [-2 -9 -9  7  0  8 -4  2 -8 -1]</span><br><span class="line"> [ 3 -1  3  3 -7  7 -5 -5 -9 -7]</span><br><span class="line"> [ 0 -4 -7 -8 -8 -8  7  2  2  1]</span><br><span class="line"> [-2  0  1  7  6  3  8 -1  1  8]</span><br><span class="line"> [ 6 -4  7 -7  6 -1 -4  6 -6 -9]</span><br><span class="line"> [-3  2  8 -7  8 -8  8  3 -1 -3]</span><br><span class="line"> [ 6  7  2 -2  1 -5  1  2  1 -2]</span><br><span class="line"> [ 2 -3 -2 -3 -7  6  7 -8 -9  4]]</span><br><span class="line"> </span><br><span class="line">process 0 bcast matrix [[ 5 -8  8  4  1 -7 -8 -6  1  3]</span><br><span class="line"> [-6 -5  6 -1 -8  5  7  2  3  7]</span><br><span class="line"> [-2 -9 -9  7  0  8 -4  2 -8 -1]</span><br><span class="line"> [ 3 -1  3  3 -7  7 -5 -5 -9 -7]</span><br><span class="line"> [ 0 -4 -7 -8 -8 -8  7  2  2  1]</span><br><span class="line"> [-2  0  1  7  6  3  8 -1  1  8]</span><br><span class="line"> [ 6 -4  7 -7  6 -1 -4  6 -6 -9]</span><br><span class="line"> [-3  2  8 -7  8 -8  8  3 -1 -3]</span><br><span class="line"> [ 6  7  2 -2  1 -5  1  2  1 -2]</span><br><span class="line"> [ 2 -3 -2 -3 -7  6  7 -8 -9  4]]</span><br><span class="line"> </span><br><span class="line">process 1 bcast matrix [[ 5 -8  8  4  1 -7 -8 -6  1  3]</span><br><span class="line"> [-6 -5  6 -1 -8  5  7  2  3  7]</span><br><span class="line"> [-2 -9 -9  7  0  8 -4  2 -8 -1]</span><br><span class="line"> [ 3 -1  3  3 -7  7 -5 -5 -9 -7]</span><br><span class="line"> [ 0 -4 -7 -8 -8 -8  7  2  2  1]</span><br><span class="line"> [-2  0  1  7  6  3  8 -1  1  8]</span><br><span class="line"> [ 6 -4  7 -7  6 -1 -4  6 -6 -9]</span><br><span class="line"> [-3  2  8 -7  8 -8  8  3 -1 -3]</span><br><span class="line"> [ 6  7  2 -2  1 -5  1  2  1 -2]</span><br><span class="line"> [ 2 -3 -2 -3 -7  6  7 -8 -9  4]]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>scatter</strong>会将发送的数据拆分，然后分给进程组中的进程</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mpi4py <span class="keyword">import</span> MPI</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">comm = MPI.COMM_WORLD</span><br><span class="line">rank = comm.Get_rank()</span><br><span class="line">size = comm.Get_size()</span><br><span class="line"></span><br><span class="line">recv_data = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    matrix = np.random.randint(-<span class="number">9</span>, <span class="number">9</span>, size=(<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">    line = np.array_split(matrix, <span class="number">10</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; prepare random matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    line = <span class="literal">None</span></span><br><span class="line">one_piece = comm.scatter(line)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; bcast matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, one_piece))</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">mpiexec --oversubscribe -np 10 python mpi_test.py</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">数据的分组数量和进程数要对应。 默认mpi最大进程数量和cpu相同，可以添加--oversubscribe解除限制</span></span><br><span class="line"></span><br><span class="line">process 0 prepare random matrix [[-9 -2 -6  4  1  7  5  5 -1 -3]</span><br><span class="line"> [-4  6  3  5 -9 -6  7  3  0 -1]</span><br><span class="line"> [-9 -6  2  5 -1  2 -2 -5 -8 -7]</span><br><span class="line"> [ 3 -4 -1 -9 -2  5  4 -8  0  1]</span><br><span class="line"> [ 3  1 -2  6 -4  0 -2 -3  6  8]</span><br><span class="line"> [ 6  5 -8 -7 -3 -7 -5 -8  5  8]</span><br><span class="line"> [-3 -9  2 -2  0 -7  6 -5  5 -2]</span><br><span class="line"> [-6 -4  8  5 -6  6  2 -3 -2  4]</span><br><span class="line"> [-5  7  3 -2  4 -8  3 -5  7 -5]</span><br><span class="line"> [ 0  4 -9 -1 -5 -2 -1 -5  7  7]]</span><br><span class="line">process 0 bcast matrix [[-9 -2 -6  4  1  7  5  5 -1 -3]]</span><br><span class="line">process 2 bcast matrix [[-9 -6  2  5 -1  2 -2 -5 -8 -7]]</span><br><span class="line">process 4 bcast matrix [[ 3  1 -2  6 -4  0 -2 -3  6  8]]</span><br><span class="line">process 6 bcast matrix [[-3 -9  2 -2  0 -7  6 -5  5 -2]]</span><br><span class="line">process 1 bcast matrix [[-4  6  3  5 -9 -6  7  3  0 -1]]</span><br><span class="line">process 3 bcast matrix [[ 3 -4 -1 -9 -2  5  4 -8  0  1]]</span><br><span class="line">process 5 bcast matrix [[ 6  5 -8 -7 -3 -7 -5 -8  5  8]]</span><br><span class="line">process 8 bcast matrix [[-5  7  3 -2  4 -8  3 -5  7 -5]]</span><br><span class="line">process 9 bcast matrix [[ 0  4 -9 -1 -5 -2 -1 -5  7  7]]</span><br><span class="line">process 7 bcast matrix [[-6 -4  8  5 -6  6  2 -3 -2  4]]</span><br></pre></td></tr></table></figure>
-<p><strong>gather</strong>收集所有分发后的数据，比如，我们需要对scatter分发的所有数据+1，然后再收集回来</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mpi4py <span class="keyword">import</span> MPI</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">comm = MPI.COMM_WORLD</span><br><span class="line">rank = comm.Get_rank()</span><br><span class="line">size = comm.Get_size()</span><br><span class="line"></span><br><span class="line">recv_data = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    matrix = np.random.randint(-<span class="number">9</span>, <span class="number">9</span>, size=(<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">    line = np.array_split(matrix, <span class="number">10</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; prepare random matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    line = <span class="literal">None</span></span><br><span class="line">line = comm.scatter(line)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> item <span class="keyword">in</span> line:</span><br><span class="line">    item += <span class="number">1</span></span><br><span class="line"></span><br><span class="line">recv_result = comm.gather(line)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    matrix = np.vstack(recv_result)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; get calculated matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">process 0 prepare random matrix </span><br><span class="line">[[-2  4  0  4 -2 -1  7  3 -1  4]</span><br><span class="line"> [-4 -8 -1 -9  8  7  8 -3 -6  1]</span><br><span class="line"> [ 1 -8  0  6 -6 -8 -7  2 -9 -1]</span><br><span class="line"> [ 7 -7  0 -4 -4  0 -2  4 -7  7]</span><br><span class="line"> [-7  3  0 -8  5 -8 -2  0  7  2]</span><br><span class="line"> [-6 -9 -3 -8  0  0  0 -7 -4 -5]</span><br><span class="line"> [ 2 -6  3 -8  8 -8 -2  0 -2 -9]</span><br><span class="line"> [ 8  8 -8 -8  7  8  4 -3 -9  3]</span><br><span class="line"> [ 8 -4  4  2  8 -2  2  7  0 -6]</span><br><span class="line"> [ 3  1 -3  2 -8 -6 -4 -5  3  0]]</span><br><span class="line"> </span><br><span class="line">process 0 get calculated matrix </span><br><span class="line">[[-1  5  1  5 -1  0  8  4  0  5]</span><br><span class="line"> [-3 -7  0 -8  9  8  9 -2 -5  2]</span><br><span class="line"> [ 2 -7  1  7 -5 -7 -6  3 -8  0]</span><br><span class="line"> [ 8 -6  1 -3 -3  1 -1  5 -6  8]</span><br><span class="line"> [-6  4  1 -7  6 -7 -1  1  8  3]</span><br><span class="line"> [-5 -8 -2 -7  1  1  1 -6 -3 -4]</span><br><span class="line"> [ 3 -5  4 -7  9 -7 -1  1 -1 -8]</span><br><span class="line"> [ 9  9 -7 -7  8  9  5 -2 -8  4]</span><br><span class="line"> [ 9 -3  5  3  9 -1  3  8  1 -5]</span><br><span class="line"> [ 4  2 -2  3 -7 -5 -3 -4  4  1]]</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>reduce</strong> 将收集到的数据进行规约，例如SUM，MAX等</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mpi4py <span class="keyword">import</span> MPI</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">comm = MPI.COMM_WORLD</span><br><span class="line">rank = comm.Get_rank()</span><br><span class="line">size = comm.Get_size()</span><br><span class="line"></span><br><span class="line">recv_data = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    matrix = np.random.randint(-<span class="number">9</span>, <span class="number">9</span>, size=(<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">    line = np.array_split(matrix, <span class="number">10</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; prepare random matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    line = <span class="literal">None</span></span><br><span class="line">line = comm.scatter(line)</span><br><span class="line">sum_result = comm.reduce(line, op=MPI.SUM)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; get calculated sum result &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, sum_result))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">process 0 prepare random matrix </span><br><span class="line">[[ 2 -9 -9 -8 -9 -8 -7  8 -6  5]</span><br><span class="line"> [ 0  6  6 -2 -6  4 -5 -7  3 -4]</span><br><span class="line"> [-9  2  6 -5 -1 -6  5 -2  3  4]</span><br><span class="line"> [ 7  4 -6 -5  1  4 -5  5 -1  1]</span><br><span class="line"> [ 1  2 -8 -7  5  2 -6 -4  5 -8]</span><br><span class="line"> [-8  0  7  1  0 -8  3 -8 -2  3]</span><br><span class="line"> [ 6  5  2 -7 -6 -3 -7  4  2 -1]</span><br><span class="line"> [ 2 -8  8 -1 -3 -9  0  4 -9 -9]</span><br><span class="line"> [-4 -7 -1 -8  4  7  1  6  4  5]</span><br><span class="line"> [-2  6  3  3  7  7 -4  1 -7 -3]]</span><br><span class="line"> </span><br><span class="line">process 0 get calculated sum result [[ -5   1   8 -39  -8 -10 -25   7  -8  -7]]</span><br></pre></td></tr></table></figure>
 
       
     </div>
