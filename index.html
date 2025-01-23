@@ -854,49 +854,49 @@ target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/图像处理"
 <col style="width: 89%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>枚举值</th>
 <th>具体含义</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>GM</td>
 <td>Global Memory，对应AI Core的外部存储。</td>
 </tr>
-<tr class="even">
+<tr>
 <td>VECIN</td>
 <td>用于矢量计算，搬入数据的存放位置，在数据搬入Vector计算单元时使用此位置</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>VECOUT</td>
 <td>用于矢量计算，搬出数据的存放位置，在将Vector计算单元结果搬出时使用此位置</td>
 </tr>
-<tr class="even">
+<tr>
 <td>VECCALC</td>
 <td>用于矢量计算/矩阵计算，在计算需要临时变量时使用此位置</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>A1</td>
 <td>用于矩阵计算，存放整块A矩阵，可类比CPU多级缓存中的二级缓存</td>
 </tr>
-<tr class="even">
+<tr>
 <td>B1</td>
 <td>用于矩阵计算，存放整块B矩阵，可类比CPU多级缓存中的二级缓存</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>A2</td>
 <td>用于矩阵计算，存放切分后的小块A矩阵，可类比CPU多级缓存中的一级缓存</td>
 </tr>
-<tr class="even">
+<tr>
 <td>B2</td>
 <td>用于矩阵计算，存放切分后的小块B矩阵，可类比CPU多级缓存中的一级缓存</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>CO1</td>
 <td>用于矩阵计算，存放小块结果C矩阵，可理解为Cube Out</td>
 </tr>
-<tr class="even">
+<tr>
 <td>CO2</td>
 <td>用于矩阵计算，存放整块结果C矩阵，可理解为Cube Out</td>
 </tr>
@@ -1044,25 +1044,25 @@ target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/notes/ddp.h
 <col style="width: 42%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>文件</th>
 <th>功能</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>torch/nn/parallel/distributed.py</td>
 <td>DistributedDataParallel类实现</td>
 </tr>
-<tr class="even">
+<tr>
 <td>torch/csrc/distributed/c10d/reducer.cpp</td>
 <td>DDP reduce类实现文件</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>torch/csrc/distributed/c10d/reducer.hpp</td>
 <td>DDP reduce接口文件</td>
 </tr>
-<tr class="even">
+<tr>
 <td>torch/csrc/distributed/c10d/init.cpp</td>
 <td>python C插件注册文件</td>
 </tr>
@@ -1203,41 +1203,41 @@ target="_blank" rel="noopener" href="https://pytorch.org/docs/stable/generated/t
 <col style="width: 54%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>文件</th>
 <th>功能</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>torch/nn/parallel/data_parallel.py</td>
 <td>DP类实现</td>
 </tr>
-<tr class="even">
+<tr>
 <td>torch/nn/parallel/_functions.py</td>
 <td>DP中使用的自定义autograd Function</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>torch/nn/parallel/comm.py</td>
 <td>线程间数据传递接口，例如，gather,scatter等</td>
 </tr>
-<tr class="even">
+<tr>
 <td>torch/nn/parallel/replicate.py</td>
 <td>模型拷贝相关</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>torch/nn/parallel/parallel_apply.py</td>
 <td>多线程执行模型</td>
 </tr>
-<tr class="even">
+<tr>
 <td>torch/nn/parallel/scatter_gather.py</td>
 <td>scatter和gather的封装</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>torch/csrc/cuda/python_comm.cpp</td>
 <td>C语言实现的数据传递函数extension注册</td>
 </tr>
-<tr class="even">
+<tr>
 <td>torch/csrc/cuda/comm.cpp</td>
 <td>C语言的数据传递实现</td>
 </tr>
@@ -1729,7 +1729,7 @@ x_1 = x_0 - \eta×\nabla f(x_0)=10-0.2*20=6
 <col style="width: 8%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th></th>
 <th>x0</th>
 <th>x1</th>
@@ -1745,7 +1745,7 @@ x_1 = x_0 - \eta×\nabla f(x_0)=10-0.2*20=6
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>梯度</td>
 <td>20</td>
 <td>12</td>
