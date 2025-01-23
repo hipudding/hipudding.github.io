@@ -1068,6 +1068,1349 @@ extention中。对应的函数是<code>CoreWorker::SubmitTask</code>，这里会
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/13/OpenCV%E6%98%87%E8%85%BE%E5%8E%9F%E7%94%9F%E6%94%AF%E6%8C%81/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
+      <meta itemprop="name" content="hipudding">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2024/11/13/OpenCV%E6%98%87%E8%85%BE%E5%8E%9F%E7%94%9F%E6%94%AF%E6%8C%81/" class="post-title-link" itemprop="url">OpenCV昇腾原生支持</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-11-13 15:40:05" itemprop="dateCreated datePublished" datetime="2024-11-13T15:40:05+08:00">2024-11-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-23 15:42:07" itemprop="dateModified" datetime="2025-01-23T15:42:07+08:00">2025-01-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>OpenCV</strong> (Open Source Computer Vision Library)
+是一个开源计算机视觉和机器学习软件库，由Intel在1999年发布。OpenCV提供了丰富的图像和视频处理功能，广泛应用于各种计算机视觉任务，如面部识别、物体检测、运动跟踪、图像增强等。它支持多种编程语言（如C++、Python、Java等）和操作系统（如Windows、Linux、macOS等），并且可以与其他深度学习框架（如TensorFlow、PyTorch）无缝集成。</p>
+<p><strong>OpenCV-contrib</strong>
+是一个附加模块的集合，为OpenCV核心库提供扩展功能。由于OpenCV核心库为了保持稳定性，通常只包含相对成熟和通用的模块，而OpenCV-contrib则提供了实验性和前沿的功能。这些模块包括一些新的特征检测算法、图像处理技术、深度学习工具、3D重建等。OpenCV-contrib项目中的模块也可能包含特定领域的工具包，例如面部识别、人脸标志检测、目标跟踪等。</p>
+<p>在计算机视觉和深度学习任务中，硬件加速器（如GPU、TPU、NPU等）被广泛用于加速计算。OpenCV的性能也可以通过这些硬件加速器来提高，这通常通过使用专用的后端硬件加速库来实现。</p>
+<h2 id="需求分析">1. 需求分析</h2>
+<p>华为Ascend系列AI处理器，凭借其强大的计算能力和高能效，在各种AI应用场景中得到了广泛应用。为了充分发挥Ascend硬件的优势，基于Ascend的OpenCV后端加速项目旨在利用Ascend的计算能力，加速OpenCV库中的部分核心算法。</p>
+<h3 id="目标">1.1 目标</h3>
+<p>开发一个基于华为Ascend
+AI处理器的OpenCV硬件加速后端，优化并加速OpenCV中的特定算法。该后端将通过集成Ascend
+Computing Library (ACL)
+来实现对OpenCV算法的硬件加速，从而提升计算性能，减少延迟，并提高能源效率。</p>
+<h3 id="需求概述">1.2 需求概述</h3>
+<p><strong>支持的算法类型</strong></p>
+<ul>
+<li>识别出OpenCV中最常用的传统图像算法，并优先为这些算法实现Ascend后端加速支持。</li>
+<li>常见的候选算法包括算数运算，图像变换，色域转换等等。</li>
+<li>根据Ascend硬件特性，可能需要修改或重新设计部分算法，以适应硬件架构，进一步优化性能。</li>
+</ul>
+<p><strong>实现Ascend Runtime</strong></p>
+<ul>
+<li>实现Ascend设备控制、Device-Host内存复制、流与事件管理等方面的功能。</li>
+</ul>
+<p><strong>异步算子支持</strong></p>
+<ul>
+<li>接口调用使用异步任务提交，实现异步计算结果获取，提高设备利用率，系统的响应速度与吞吐量。</li>
+<li>支持ACL算子调用能力，以及AscendC自定义算子。</li>
+<li>支持OpenCV矩阵结构向ACL矩阵结构转换能力。</li>
+</ul>
+<p><strong>兼容性与集成</strong></p>
+<ul>
+<li>确保该后端能够无缝集成到现有的OpenCV框架中，用户无需进行大量修改即可使用加速功能。</li>
+<li>保证与OpenCV其他后端的兼容性，用户可以根据具体硬件环境选择最优的加速方案。</li>
+</ul>
+<p><strong>性能评估与优化</strong></p>
+<ul>
+<li>针对不同算法，设计性能评估测试用例，并基于测试结果持续优化算法与后端实现。</li>
+<li>与基线（CPU）性能进行对比，明确性能优势与改进方向。</li>
+</ul>
+<p><strong>文档与用户指南</strong></p>
+<ul>
+<li>编写详细的开发文档与用户指南，帮助开发者理解如何使用该后端进行算法加速。</li>
+<li>提供API描述、使用示例、常见问题解答、性能优化建议等。</li>
+</ul>
+<h2 id="架构设计">2. 架构设计</h2>
+<h3 id="opencv项目架构">2.1 OpenCV项目架构</h3>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/2024/08/29/6188c31faa10d14953661334c757720b-20240829102417-e9056e.png"
+alt="OpenCV项目架构" />
+<figcaption aria-hidden="true">OpenCV项目架构</figcaption>
+</figure>
+<p>OpenCV内部模块较多，如上图所示，这是一个简化的OpenCV整体架构。按模块类型可以分为以下几类（含内部模块举例）：</p>
+<p><strong>核心模块 (Core Modules)</strong></p>
+<ul>
+<li><strong>核心模块 (Core)</strong>
+基础数据结构和算法（如矩阵运算、线性代数）。</li>
+<li><strong>图像处理 (Imgproc)</strong>
+图像滤波、形态学变换、边缘检测等。</li>
+<li><strong>视频处理 (Video)</strong>
+视频捕捉、帧处理、运动检测等。</li>
+<li><strong>相机校正 (Calib3d)</strong>
+相机标定、3D重建、立体匹配等。</li>
+<li><strong>特征检测 (Features2d)</strong>
+特征点检测与描述子计算（如SIFT、ORB）。</li>
+</ul>
+<p><strong>算法库 (Algorithm Libraries)</strong></p>
+<ul>
+<li><p><strong>机器学习 (ML)</strong></p>
+<p>支持分类、回归、聚类、神经网络等机器学习算法。</p></li>
+<li><p><strong>对象检测 (Objdetect)</strong></p>
+<p>人脸检测、目标跟踪等高级检测算法。</p></li>
+<li><p><strong>图像分割 (Imgsegm)</strong></p>
+<p>超像素分割、图像聚类等。</p></li>
+</ul>
+<p><strong>硬件加速 (Hardware Acceleration)</strong></p>
+<ul>
+<li><p><strong>CUDA 支持</strong></p>
+<p>基于NVIDIA GPU的CUDA加速模块。</p></li>
+<li><p><strong>OpenCL 支持</strong></p>
+<p>基于OpenCL的跨平台硬件加速支持。</p></li>
+<li><p><strong>Vulkan 支持</strong></p>
+<p>基于Vulkan的图像处理加速。</p></li>
+</ul>
+<p><strong>第三方集成 (Third-Party Integrations)</strong></p>
+<ul>
+<li><p><strong>Python 接口</strong></p>
+<p>提供对Python的API绑定。</p></li>
+<li><p><strong>Java 接口</strong></p>
+<p>提供对Java的API绑定。</p></li>
+<li><p><strong>Android/IOS 支持</strong></p>
+<p>移动设备上的OpenCV应用开发支持。</p></li>
+</ul>
+<p><strong>应用层 (Application Layer)</strong></p>
+<ul>
+<li><strong>图像和视频处理应用</strong></li>
+<li><strong>增强现实 (AR)</strong></li>
+<li><strong>机器人视觉</strong></li>
+<li><strong>自动驾驶</strong></li>
+</ul>
+<h3 id="opencv-cann硬件加速模块架构">2.2 OpenCV
+CANN硬件加速模块架构</h3>
+<p>OpenCV的昇腾原生支持将在硬件加速(Hardware Acceleration)中添加对Ascend
+NPU的支持。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/2024/08/29/ebcc2df8052dec2278815f533e23fd3c-ebcc2df8052dec2278815f533e23fd3c-20240829111755-4523ce-f49b69.png"
+alt="OpenCV昇腾支持示意图" />
+<figcaption aria-hidden="true">OpenCV昇腾支持示意图</figcaption>
+</figure>
+<p>针对该项目的需求，需要实现以下模块：</p>
+<p><strong>Ascend Runtime</strong></p>
+<ul>
+<li><p><strong>设备控制</strong>：负责管理与Ascend
+NPU硬件的通信和控制。</p></li>
+<li><p><strong>设备-主机内存复制</strong>：处理数据在Ascend
+NPU设备和主机之间的内存传输。</p></li>
+<li><p><strong>流管理</strong>：管理计算任务流的调度和执行。</p></li>
+<li><p><strong>事件管理</strong>：处理计算过程中的事件和同步问题。</p></li>
+</ul>
+<p><strong>AscendC内核</strong></p>
+<ul>
+<li><p><strong>AscendC构建框架</strong>：提供内核构建的工具和框架。</p></li>
+<li><p><strong>内核实现</strong>：实现具体的计算内核，提供加速计算功能。</p></li>
+<li><p><strong>内核调用管理</strong>：管理内核的调用过程和参数。</p></li>
+<li><p><strong>内核结果获取</strong>：从内核执行中获取计算结果。</p></li>
+</ul>
+<p><strong>ACL算子</strong></p>
+<ul>
+<li><p><strong>OpenCV到ACL结构转换</strong>：将OpenCV数据结构转换为ACL支持的格式。</p></li>
+<li><p><strong>算子编译和调用</strong>：编译并调用ACL算子来执行计算任务。</p></li>
+<li><p><strong>异步结果获取</strong>：支持异步获取ACL算子的计算结果。</p></li>
+</ul>
+<p><strong>CANN模块</strong></p>
+<ul>
+<li><p><strong>cann_module</strong>：作为核心模块，定义各类数据结构，Allocator，Ascend
+Runtime接口封装等。</p></li>
+<li><p><strong>element_operator</strong>：处理基本的元素级操作，例如加法、乘法等。</p></li>
+<li><p><strong>core</strong>：提供核心图像变换功能，例如，merge，flip等。</p></li>
+<li><p><strong>cvtcolor</strong>：专门处理颜色空间转换操作，如RGB到灰度转换等。</p></li>
+</ul>
+<p><strong>接口和绑定</strong></p>
+<ul>
+<li><p><strong>C++接口</strong>：为C++应用程序提供接口，允许直接调用CANN模块的功能。</p></li>
+<li><p><strong>Python绑定</strong>：为Python应用程序提供接口，方便用户在Python环境中使用CANN模块。</p></li>
+</ul>
+<p><strong>其他</strong></p>
+<ul>
+<li><strong>错误处理</strong>：负责管理和记录各类级别日志，方便问题排查定位。</li>
+<li><strong>功能测试</strong>：确保模块各项功能的正确性和稳定性。</li>
+<li><strong>性能测试</strong>：对模块进行性能测试，验证加速效果和计算效率。</li>
+<li><strong>样例</strong>：提供示例代码，帮助用户了解如何使用CANN模块。</li>
+<li><strong>教程</strong>：提供详细的用户指南和教程，帮助用户快速上手和使用CANN模块。</li>
+</ul>
+<p>CANN各个模块的依赖和调用关系如下图所示：</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/2024/08/29/9fb69ef2f5087e843463fc6e5bff5206-20240829112417-e21481.png"
+alt="OpenCV算法调用时序图" />
+<figcaption aria-hidden="true">OpenCV算法调用时序图</figcaption>
+</figure>
+<h2 id="cann_module">3. Cann_Module</h2>
+<p>CANN模块中定义了OpenCV中的关键结构体，AscendMat，AscendStream和AscendEvent。其中AscendMat结构与Mat结构类似，需要有与InputArray（各类Mat的通用结构）相互转换的能力。与其他后端的Mat，Stream和Event类型类似，需要实现以下接口。AscendMat中存储着矩阵的shape和数据，并且有Device-Host内存拷贝能力，以及类型转换等能力。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/2024/08/29/cb0fb968ce95e0e8ab3be5e8900a7e6e-20240829113201-89a37a.png"
+alt="Cann Module类图" />
+<figcaption aria-hidden="true">Cann Module类图</figcaption>
+</figure>
+<h3 id="类和组件">3.1 类和组件</h3>
+<p><strong>AscendMat 类</strong></p>
+<p>AscendMat 是一个封装了 Ascend 设备内存的矩阵类，类似于 OpenCV 的 Mat
+类，但专为 Ascend 硬件设计。它支持各种矩阵操作，并通过内部的 Allocator
+进行内存管理。</p>
+<p><strong>主要属性</strong>:</p>
+<ul>
+<li><p>Allocator* allocator：用于内存分配的分配器。</p></li>
+<li><p>int
+flags：包括魔术签名、连续性标志、深度和通道数等信息的位字段。</p></li>
+<li><p>int rows, cols：矩阵的行数和列数。</p></li>
+<li><p>size_t step：每行的字节数。</p></li>
+<li><p>std::shared_ptr<uchar> data：指向矩阵数据的智能指针。</p></li>
+<li><p>uchar* datastart, const uchar* dataend：辅助字段用于 ROI
+定位和调整。</p></li>
+</ul>
+<p><strong>主要方法</strong>:</p>
+<ul>
+<li><p>构造函数和拷贝构造函数，用于初始化和复制矩阵。</p></li>
+<li><p>setTo：设置矩阵中的所有元素。</p></li>
+<li><p>create：分配新的矩阵数据。</p></li>
+<li><p>upload 和 download：将数据上传到设备或从设备下载。</p></li>
+<li><p>convertTo：将矩阵转换为其他数据类型。</p></li>
+<li><p>isContinuous, elemSize, size
+等方法用于获取矩阵的属性和信息。</p></li>
+<li><p>defaultAllocator()：获取默认分配器。</p></li>
+<li><p>setDefaultAllocator(Allocator*
+allocator)：设置默认分配器。</p></li>
+</ul>
+<p><strong>Allocator 类</strong></p>
+<p>Allocator 是 AscendMat 的内部类，用于处理内存分配。</p>
+<p><strong>主要方法</strong>:</p>
+<ul>
+<li><p>allocate(size_t size)：分配指定大小的内存。</p></li>
+<li><p>allocate(AscendMat* mat, int rows, int cols, size_t
+elemSize)：为矩阵分配内存并初始化相关字段。</p></li>
+</ul>
+<p><strong>DefaultAllocator 类</strong></p>
+<p>DefaultAllocator 继承自
+Allocator，实现了具体的内存分配和释放方法。</p>
+<p><strong>主要方法</strong>:</p>
+<ul>
+<li><p>allocate(size_t size)：使用 aclrtMalloc 分配内存。</p></li>
+<li><p>allocate(AscendMat* mat, int rows, int cols, size_t elemSize)：为
+AscendMat 分配内存并设置步幅。</p></li>
+</ul>
+<p><strong>AscendStream 类</strong></p>
+<p>AscendStream 管理 Ascend
+设备上的任务流，支持任务的异步执行和同步。</p>
+<p><strong>主要方法</strong>:</p>
+<ul>
+<li><p>waitForCompletion()：阻塞当前线程直到流中的所有操作完成。</p></li>
+<li><p>waitAscendEvent(const AscendEvent&amp;
+event)：阻塞当前线程直到事件触发。</p></li>
+<li><p>Null()：返回默认的空流对象。</p></li>
+<li><p>addTensorHolder(const std::shared_ptr<uchar>&amp;
+holder)：向流中添加张量持有者。</p></li>
+</ul>
+<p><strong>AscendEvent 类</strong></p>
+<p>AscendEvent 用于流之间的同步。</p>
+<p><strong>主要方法</strong>:</p>
+<ul>
+<li>record(AscendStream&amp; stream)：记录事件。</li>
+<li>waitForComplete()：等待事件完成。</li>
+</ul>
+<h2 id="acl封装">4. ACL封装</h2>
+<p>AscendTensor结构与AscendMat相对应，用于将AscendMat转换成Ascend亲和的格式。其中矩阵数据使用智能指针，用户任务异步执行。</p>
+<p>OperatorRunner是算子执行的类，用于设置算子执行所需的算子名称，属性，输入和输出矩阵，该类的成员函数均返回自身指针，方便设置多个属性。</p>
+<p>除此之外，ACL封装也为了隔离ACL相关的库，整个工程中仅在此文件中会依赖ACL相关符号，避免OpenCV和ACL库的过度耦合，除了下述类图之外，其他的设备管理均做了封装，例如初始化，去初始化，内存管理和拷贝等。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/2024/08/30/42149854740023745a869eb4e6a93683-42149854740023745a869eb4e6a93683-20240830103751-eea9d0-40ba0e.png"
+alt="ACL 模块类图" />
+<figcaption aria-hidden="true">ACL 模块类图</figcaption>
+</figure>
+<p>ACL算子允许异步提交，来提高硬件利用率，提高数据处理吞吐。所以当某个算子任务提交后，无法直接判断其执行进度，所以需要对矩阵数据进行保存，避免计算完成前数据被释放。</p>
+<p>算子提交后，其智能指针会保存到AscendStream的tensorHolder中，即使超出某个AscendTensor的生命周期，该部分数据仍会保存，直到Stream
+Sync后，这些tensor才会真正释放。</p>
+<p>为了避免内存浪费，可以在AscendStream中插入AscendEvent，通过判断Event是否完成，来判断有那些tensor已经计算完成，可以尽快释放。</p>
+<p>为了进一步提高内存的分配效率，后续可以添加内存池，由应用来进行Device上的内存管理，避免频繁调用Device的内存申请释放。</p>
+<h2 id="支持的算法">5. 支持的算法</h2>
+<h3 id="算数计算">5.1 算数计算</h3>
+<p>本节详细描述针对 Ascend 硬件加速器的 OpenCV
+算术操作实现。包括各种算术操作的计算公式及其在代码中的实现细节。</p>
+<p><strong>加法(Add)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算两个输入图像对应像素值的和。支持输入图像的类型为
+AscendMat 和 Scalar。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = alpha\times\text{src1}(i, j) +
+beta\times\text{src2}(i, j)
+\]</span></p></li>
+<li><p><strong>说明</strong>：alpha 和 beta
+参数允许对输入图像进行加权和调整。</p></li>
+</ul>
+<p><strong>减法 (subtract)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算两个输入图像对应像素值的差。支持输入图像的类型为
+AscendMat 和 Scalar。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = \text{src1}(i, j) - \text{src2}(i, j)
+\]</span></p></li>
+</ul>
+<p><strong>乘法 (multiply)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算两个输入图像对应像素值的乘积。支持输入图像的类型为
+AscendMat 和 Scalar，还支持缩放因子的应用。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = scale\times(\text{src1}(i, j) \times \text{src2}(i,
+j))
+\]</span></p></li>
+<li><p><strong>说明</strong>：scale
+参数允许对结果进行缩放，以调整输出图像的亮度或对比度。</p></li>
+</ul>
+<p><strong>除法 (divide)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算两个输入图像对应像素值的商。支持输入图像的类型为
+AscendMat 和 Scalar，还支持缩放因子的应用。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = scale\times\frac{\text{src1}(i, j)}{\text{src2}(i,
+j)}
+\]</span></p></li>
+<li><p><strong>说明</strong>：scale
+参数用于调整除法结果的缩放。</p></li>
+</ul>
+<p><strong>按位与 (bitwise_and)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算两个输入图像对应像素值的按位与操作。支持输入图像的类型为
+AscendMat 和 Scalar。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = \text{src1}(i, j) \&amp; \text{src2}(i, j)
+\]</span></p></li>
+<li><p><strong>说明</strong>：用于图像的遮罩和掩盖操作。</p></li>
+</ul>
+<p><strong>按位或 (bitwise_or)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算两个输入图像对应像素值的按位或操作。支持输入图像的类型为
+AscendMat 和 Scalar。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = \text{src1}(i, j) \| \text{src2}(i, j)
+\]</span></p></li>
+<li><p><strong>说明</strong>：用于图像合成和区域提取。</p></li>
+</ul>
+<p><strong>按位异或 (bitwise_xor)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算两个输入图像对应像素值的按位异或操作。支持输入图像的类型为
+AscendMat 和 Scalar。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = \text{src1}(i, j) \oplus \text{src2}(i, j)
+\]</span></p></li>
+<li><p><strong>说明</strong>：用于图像的特殊编码和数据加密。</p></li>
+</ul>
+<p><strong>按位取反 (bitwise_not)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算图像像素值的按位取反操作。支持输入图像的类型为
+AscendMat。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = \sim \text{src}(i, j)
+\]</span></p></li>
+<li><p><strong>说明</strong>：用于反转图像中的每个像素值。</p></li>
+</ul>
+<p><strong>加权和 (addWeighted)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：计算两个输入图像的加权和。支持输入图像的类型为
+AscendMat 和 Scalar，并且可以指定加权系数和加法常数。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{dst}(i, j) = \text{alpha} \times \text{src1}(i, j) + \text{beta}
+\times \text{src2}(i, j) + \text{gamma}
+\]</span></p></li>
+<li><p><strong>说明</strong>：alpha 和 beta 用于加权输入图像，gamma
+用于加法常数。</p></li>
+</ul>
+<p><strong>Threshold</strong></p>
+<ul>
+<li><p><strong>描述</strong>：对输入图像中的像素值进行阈值操作，根据指定的阈值和类型，将像素值调整为新的值。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+Binary:
+\text{dst}(i, j) =
+\begin{cases}
+\text{maxVal} &amp; \text{if } \text{src}(i, j) &gt; \text{thresh} \\
+0 &amp; \text{otherwise}
+\end{cases}
+\\
+\\
+Binary Inverted:
+\text{dst}(i, j) =
+\begin{cases}
+0 &amp; \text{if } \text{src}(i, j) &gt; \text{thresh} \\
+\text{maxVal} &amp; \text{otherwise}
+\end{cases}
+\\
+\\
+Truncate:
+\text{dst}(i, j) =
+\begin{cases}
+\text{thresh} &amp; \text{if } \text{src}(i, j) &gt; \text{thresh} \\
+\text{src}(i, j) &amp; \text{otherwise}
+\end{cases}
+\\
+\\
+To Zero:
+\text{dst}(i, j) =
+\begin{cases}
+\text{src}(i, j) &amp; \text{if } \text{src}(i, j) &gt; \text{thresh} \\
+0 &amp; \text{otherwise}
+\end{cases}
+\\
+\\
+To Zero Inverted:
+\text{dst}(i, j) =
+\begin{cases}
+0 &amp; \text{if } \text{src}(i, j) &gt; \text{thresh} \\
+\text{src}(i, j) &amp; \text{otherwise}
+\end{cases}
+\]</span></p></li>
+<li><p><strong>说明</strong>：Threshold
+操作广泛用于图像分割和预处理阶段。不同的阈值类型允许对图像中的不同区域进行区分和处理。</p></li>
+</ul>
+<p>上述算法接口较为类似，为了避免重复代码，需要将此类函数调用使用模板的方式进行抽象。</p>
+<p>接口分为外部接口和内部接口，外部接口是对内部接口的封装，避免代码重复和额外的数据类型转换。</p>
+<h3 id="图像核心算法">5.2 图像核心算法</h3>
+<p>这段代码是 OpenCV 项目中的一部分，专门为 Ascend
+硬件加速器提供了图像处理操作的实现。这些操作包括数据格式转换、图像合并与分割、转置、翻转、旋转、裁剪和缩放。以下是对每个操作的简要介绍：</p>
+<p><strong>数据转换 (transData)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：将输入数据从一种格式转换为另一种格式，例如从
+NCHW 转换为 NHWC。</p></li>
+<li><p><strong>说明</strong>：此函数用于将输入图像或矩阵的存储格式在不同的维度顺序之间进行转换，以适应不同的深度学习模型或计算需求。</p></li>
+</ul>
+<p><strong>图像合并 (merge)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：将多个输入矩阵按通道维度合并为一个矩阵。输入矩阵的数量和类型必须相同。</p></li>
+<li><p><strong>计算公式</strong>：</p></li>
+</ul>
+<p><span class="math display">\[
+\text{dst}(x, y) = \begin{bmatrix}
+\text{B}(x, y) \
+\text{G}(x, y) \
+\text{R}(x, y)
+\end{bmatrix}
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：此函数在图像处理和深度学习中，用于将多通道图像合并为单一矩阵，以适应后续的处理或模型输入要求。</li>
+</ul>
+<p><strong>图像分割 (split)</strong></p>
+<ul>
+<li><strong>描述</strong>：将一个多通道矩阵按通道维度分割为多个单通道矩阵。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+\text{B}(x, y) = \text{dst}(x, y)[0] \\
+\text{G}(x, y) = \text{dst}(x, y)[1] \\
+\text{R}(x, y) = \text{dst}(x, y)[2]
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：此函数用于将多通道图像分割成独立的单通道图像，通常用于图像分析和预处理。</li>
+</ul>
+<p><strong>转置 (transpose)</strong></p>
+<ul>
+<li><strong>描述</strong>：对输入矩阵执行转置操作，交换指定的维度。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+\text{dst}(i, j) = \text{src}(j, i)
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：转置操作通常用于调整矩阵的维度顺序，以适应特定的算法或网络层要求。</li>
+</ul>
+<p><strong>翻转 (flip)</strong></p>
+<ul>
+<li><strong>描述</strong>：根据指定的轴对图像进行翻转操作。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+水平翻转：\text{dst}(x, y) = \text{src}(x, H - 1 - y) \\
+垂直翻转：\text{dst}(x, y) = \text{src}(H - 1 - x, y) \\
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：图像翻转常用于数据增强，帮助模型学习不同的视角和方向。</li>
+</ul>
+<p><strong>旋转 (rotate)</strong></p>
+<ul>
+<li><strong>描述</strong>：根据指定的模式对图像进行旋转操作，支持 90
+度顺时针、180 度和 90 度逆时针旋转。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+90度顺时针：\text{dst}(x, y) = \text{src}(H - y - 1, x) \\
+180度：\text{dst}(x, y) = \text{src}(H - x - 1, W - y - 1) \\
+90度逆时针：\text{dst}(x, y) = \text{src}(y, W - x - 1) \\
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：旋转操作在图像处理和数据增强中常用，用于产生不同角度的视图。</li>
+</ul>
+<p><strong>裁剪 (crop)</strong></p>
+<ul>
+<li><strong>描述</strong>：从输入图像中裁剪指定矩形区域。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+\text{dst}(x, y) = \text{src}(x + x_{offset}, y + y_{offset}) \\
+其中 x_{offset} 和 y_{offset} 为裁剪区域的偏移量。
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：裁剪操作用于提取图像中的特定区域，以进行更细致的分析或处理。</li>
+</ul>
+<p><strong>调整大小 (resize)</strong></p>
+<ul>
+<li><strong>描述</strong>：将输入图像缩放到指定的大小，支持不同的插值方法，如双三次插值和区域插值。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+双线性插值(Bilinear):dst(x, y) = (y_2 - y) \cdot \left[ (x_2 - x) \cdot
+src(x_1, y_1) + (x - x_1) \cdot src(x_2, y_1) \right] +\\ (y - y_1)
+\cdot \left[ (x_2 - x) \cdot src(x_1, y_2) + (x - x_1) \cdot src(x_2,
+y_2) \right]
+\\
+双三次差值(Cubic):\text{dst}(x, y) = \sum_{m=-1}^{2} \sum_{n=-1}^{2}
+w(m) w(n) \text{src}(x+m, y+n) \\
+区域插值(Area):\text{dst}(x, y) = \frac{1}{\text{area}}
+\sum_{(x{\prime}, y{\prime}) \in \text{region}} \text{src}(x{\prime},
+y{\prime})
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：调整大小操作在图像预处理阶段非常重要，用于将图像缩放到模型要求的输入尺寸。</li>
+</ul>
+<p><strong>裁剪+调整大小 (crop_resize)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：从一张大图中扣出一张或多张子图，并缩放到指定尺寸。</p></li>
+<li><p><strong>计算公式</strong>为crop和resize算子依次执行，此处不做赘述。</p></li>
+<li><p><strong>说明</strong>：</p>
+<ul>
+<li><p>若crop的宽高与resize之后的宽高一致，则不进行缩放；resize宽高必须与输出宽高一致。</p></li>
+<li><p>输入图片分辨率在[10×6, 4096×4096]范围内，支持<a
+target="_blank" rel="noopener" href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha001/apiref/appdevgapi/aclcppdevg_03_0637.html#ZH-CN_TOPIC_0000002046543820__section9180153242717">图片格式、宽高对齐、内存约束</a>处说明的输入图片格式。</p></li>
+</ul></li>
+</ul>
+<p><strong>原地边框填充 (copyMakeBorder)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：该函数在使用指定的外推边界模式时，计算并返回与指定外推像素相对应的供体像素的坐标。</p></li>
+<li><p><strong>计算公式</strong>： <span class="math display">\[
+\text{常数填充}: src&#39;(x, y) = \text{value}, \quad \text{如果} \ (x,
+y) \text{是边界元素}\\
+\text{复制边缘}: src&#39;(x, y) = src(x&#39;, y&#39;), \quad \text{其中}
+\ (x&#39;, y&#39;) \text{为最近的图像内的像素坐标}
+\]</span></p></li>
+<li><p><strong>说明</strong>：</p>
+<ul>
+<li><code>scalar_value</code>仅在填充类型为<code>HI_BORDER_CONSTANT</code>的时候有效，指定填充的像素值。<br />
+</li>
+<li>输入图片分辨率在[10×6, 4096×4096]范围内，支持<a
+target="_blank" rel="noopener" href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha001/apiref/appdevgapi/aclcppdevg_03_0637.html#ZH-CN_TOPIC_0000002046543820__section9180153242717">图片格式、宽高对齐、内存约束</a>处说明的输入图片格式。</li>
+</ul></li>
+</ul>
+<p><strong>裁剪+调整大小+边框填充 (cropResizeMakeBorder)</strong></p>
+<ul>
+<li><p><strong>描述</strong>：按指定区域从一张输入图片中抠出一个或多个子图，对子图缩放后，再将每个子图按指定类型填充，作为一张或多张目标图片输出，主要用于等比例缩放场景。</p></li>
+<li><p><strong>计算公式</strong>为crop、resize和copyMakeBorder算子依次执行，此处不做赘述。</p></li>
+<li><p><strong>说明</strong>：</p>
+<ul>
+<li>若crop的宽高与resize之后的宽高一致，则不进行缩放。</li>
+<li><code>scalar_value</code>仅在填充类型为<code>HI_BORDER_CONSTANT</code>的时候有效，指定填充的像素值。</li>
+<li>输入图片分辨率在[10×6, 4096×4096]范围内，支持<a
+target="_blank" rel="noopener" href="https://www.hiascend.com/document/detail/zh/CANNCommunityEdition/800alpha001/apiref/appdevgapi/aclcppdevg_03_0637.html#ZH-CN_TOPIC_0000002046543820__section9180153242717">图片格式、宽高对齐、内存约束</a>处说明的输入图片格式。</li>
+</ul></li>
+</ul>
+<p>接口分为外部接口和内部接口，外部接口是对内部接口的封装，避免代码重复和额外的数据类型转换。</p>
+<h3 id="色域转换">5.3 色域转换</h3>
+<p>本节是用于在华为Ascend硬件上加速OpenCV图像处理操作的。以下是对主要函数的解释：</p>
+<p><strong>cvtBGRtoBGR</strong></p>
+<ul>
+<li><strong>描述</strong>: 将 BGR
+图像转换为指定的通道数（DCN）并根据选项交换蓝色通道的位置。</li>
+<li><strong>说明</strong> 将 BGR
+图像的三个通道分离，并根据是否需要交换蓝色通道进行处理。然后将处理后的通道合并为指定的通道数（3
+或 4）。</li>
+</ul>
+<p><strong>cvtBGRtoGray</strong></p>
+<ul>
+<li><strong>描述</strong>：将 BGR 图像转换为灰度图像。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+\text{Gray} = 0.299 \times \text{Red} + 0.587 \times \text{Green} +
+0.114 \times \text{Blue}
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：将 BGR
+图像转换为灰度图像，通过应用加权系数来计算每个像素的灰度值。</li>
+</ul>
+<p><strong>cvtGraytoBGR</strong></p>
+<ul>
+<li><strong>描述</strong>： 将灰度图像转换为 BGR 图像。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+\text{BGR} = \begin{bmatrix}
+\text{Gray} \
+\text{Gray} \
+\text{Gray}
+\end{bmatrix}
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：将灰度图像的单通道复制为三个通道（或四个通道），然后合并为
+BGR（或 BGRA）图像。</li>
+</ul>
+<p><strong>cvtBGRtoXYZ</strong></p>
+<ul>
+<li><strong>描述</strong>：将 BGR 图像转换为 XYZ 颜色空间。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+$$
+<span class="math display">\[\begin{bmatrix}
+X \\
+Y \\
+Z
+\end{bmatrix}\]</span>
+<span class="math display">\[\begin{bmatrix}
+0.412453 &amp; 0.357580 &amp; 0.180423 \\
+0.212671 &amp; 0.715160 &amp; 0.072169 \\
+0.019334 &amp; 0.119193 &amp; 0.950227
+\end{bmatrix}
+\begin{bmatrix}
+\text{Blue} \\
+\text{Green} \\
+\text{Red}
+\end{bmatrix}\]</span>
+<p>$$</p>
+<p><strong>说明</strong>：将 BGR 图像通过矩阵乘法转换为 XYZ
+颜色空间。</p>
+<p><strong>cvtXYZtoBGR</strong></p>
+<ul>
+<li><strong>描述</strong>：将 XYZ 颜色空间图像转换为 BGR 图像。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+$$
+<span class="math display">\[\begin{bmatrix}
+\text{Blue} \\
+\text{Green} \\
+\text{Red}
+\end{bmatrix}\]</span>
+<span class="math display">\[\begin{bmatrix}
+3.240479 &amp; -1.53715 &amp; -0.498535 \\
+-0.969256 &amp; 1.875991 &amp; 0.041556 \\
+0.055648 &amp; -0.204043 &amp; 1.057311
+\end{bmatrix}
+\begin{bmatrix}
+X \\
+Y \\
+Z
+\end{bmatrix}\]</span>
+<p>$$</p>
+<ul>
+<li><strong>说明</strong>：将 XYZ 图像通过矩阵乘法转换为 BGR
+图像，并根据需要添加 alpha 通道。</li>
+</ul>
+<p><strong>cvtBGRtoYCrCb</strong></p>
+<ul>
+<li><strong>描述</strong>：将 BGR 图像转换为 YCrCb 颜色空间。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+Y = 0.299 \times \text{Red} + 0.587 \times \text{Green} + 0.114 \times
+\text{Blue} \\
+\text{Cr} = 0.713 \times (\text{Red} - Y) + 128 \\
+\text{Cb} = 0.564 \times (\text{Blue} - Y) + 128
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：将 BGR 图像转换为 YCrCb
+颜色空间，并根据需要调整通道顺序。</li>
+</ul>
+<p><strong>cvtYCrCbtoBGR</strong></p>
+<ul>
+<li><strong>描述</strong>：将 YCrCb 颜色空间图像转换为 BGR 图像。</li>
+<li><strong>计算公式</strong>：</li>
+</ul>
+<p><span class="math display">\[
+\text{Red} = Y + 1.402 \times (\text{Cr} - 128) \\
+\text{Blue} = Y + 1.772 \times (\text{Cb} - 128) \\
+\text{Green} = Y - 0.344136 \times (\text{Cr} - 128) - 0.714136 \times
+(\text{Cb} - 128)
+\]</span></p>
+<ul>
+<li><strong>说明</strong>：将 YCrCb 图像转换为 BGR
+图像，通过矩阵计算恢复到 BGR 颜色空间，并根据需要添加 alpha 通道。</li>
+</ul>
+<p>RGB月YUV相互转换的计算方法与YCrCb计算方法类似，以及RGB，BGR，
+RGBA，BGRA与其他色域转换实现类似，使用不用参数的方式复用上述色域转换代码。</p>
+<h2 id="python绑定">6. Python绑定</h2>
+<p>OpenCV的python绑定通过一个Python脚本对C++的接口函数解析实现，重载的函数会在python绑定中生成多个绑定，根据参数类型试探的方式选择正确的重载函数。</p>
+<p>OpenCV对输入和输出有一个通用结构，分别是InputArray和OutputArray，这两个结构会在python绑定中自动与Mat（UMat，GpuMat）进行转换，在python调用中，这些算法接口可以传入numpy结构或者任意一种Mat结构。由于后端加速器包在OpenCV-Contrib中，为了避免修改OpenCV主仓库，所以InputArray和OutputArray无法识别到AscendMat，也就无法做自动转换。</p>
+<p>为了提供一致的使用体验，在提供CANN模块接口时，需要提供InputArray/OutputArray的接口，也需要提供AscendMat的接口，在CANN模块内部做InputArray/OutputArray与AscendMat的类型转换。</p>
+<p>该接口既提供C++接口，也提供python绑定接口。该接口是使用CANN模块的入口，根据OpenCV的项目要求，需要提供详细的Doxygen描述，以生成标准的doc手册。</p>
+<h2 id="ascendc支持">7. AscendC支持</h2>
+<p>AscendC是自定义算子的编程语言，为了提高算子的执行效率，最好的方式使用AscendC来编写合适的融合算子。在OpenCV昇腾支持中，AscendC支持是一个实验性质的特性。</p>
+<p>整体AscendC应该当做昇腾支持的一个子模块，于OpenCV一同链接到二进制中。需要实现AscendC编译链接框架，并且实现一个简单的算子（Threshold)，当做自定义算子的样例。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">opencv</span><br><span class="line">   └── opencv_cann.so</span><br><span class="line">          └──  ascendc_kernels.so</span><br></pre></td></tr></table></figure>
+<h2 id="dvpp支持">8. DVPP支持</h2>
+<p>DVPP是昇腾AI处理器内置的图像处理单元，专门用于图像和视频的处理和加速，可以通过AscendCL的媒体数据处理接口进行调用，提供了强大的媒体处理硬加速能力。在OpenCV昇腾支持中，DVPP支持主要提供高性能算子特性。</p>
+<p>DVPP支持应作为昇腾支持的子模块，由于其数据对齐及读取格式等约束不同于执行于AI
+core和AI
+cpu的Aclop算子，需为其单独设计运行时管理、内存管理及数据处理流程的类及方法，初步设计如下：</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/MengqingCao/BlogImage/main/imgs/20241113103844.png"
+alt="DVPP类图" />
+<figcaption aria-hidden="true">DVPP类图</figcaption>
+</figure>
+<p>其中，DvppOperatorDesc管理DVPP初始化、重置，及创建通道、输入、输出、获取结果等算子运行流程管理，WrapperFunctions完成具体的参数配置、算子调用等。</p>
+<h2 id="测试">9. 测试</h2>
+<h3 id="功能测试">9.1 功能测试</h3>
+<p>功能测试使用OpenCV的功能测试框架，验证所有的接口以及不同入参组合，将Ascend执行结果与CPU结果做比对，要求误差在允许范围内。</p>
+<h4 id="ascendmat验证">9.1.1 AscendMat验证</h4>
+<p><strong>AscendMat 的构造函数测试</strong>
+<strong>测试目的</strong>:</p>
+<ul>
+<li>验证 AscendMat 的默认构造函数和自定义构造函数的正确性。</li>
+<li>验证 AscendMat 构造时传递的大小、类型、值是否正确分配。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>使用默认构造函数创建 AscendMat 对象，并检查默认分配器是否正确。</li>
+<li>设置和获取自定义分配器，确保分配器设置和获取功能正常。</li>
+<li>创建指定大小和类型的 AscendMat
+对象，并检查行数、列数、深度和通道数是否与预期一致。</li>
+<li>使用特定值填充 AscendMat 对象，并检查填充值是否正确。</li>
+<li>从主机内存创建 AscendMat 对象，并检查数据的正确性。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>默认构造函数应使用默认分配器。</li>
+<li>自定义分配器应成功设置和获取。</li>
+<li>创建的 AscendMat 对象的大小、类型和填充值应与预期匹配。</li>
+<li>从主机内存构造的 AscendMat 数据应与输入数据一致。</li>
+</ul>
+<p><strong>AscendMat 的赋值操作测试</strong>
+<strong>测试目的</strong>:</p>
+<ul>
+<li>验证 AscendMat 对象间的赋值操作是否能正确复制数据和元数据。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建两个 AscendMat 对象，一个使用自定义分配器分配内存。</li>
+<li>将一个 AscendMat
+对象赋值给另一个，并检查行数、列数、深度、通道数及数据指针是否一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>赋值操作应正确复制行数、列数、深度、通道数及数据指针。</li>
+</ul>
+<p>**</p>
+<p><strong>AscendMat 的 setTo 方法测试</strong>
+<strong>测试目的</strong>:</p>
+<ul>
+<li>验证 AscendMat 的 setTo
+方法能否正确将矩阵的所有元素设置为指定值。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个 AscendMat 对象，并使用 setTo
+方法将其所有元素设置为随机生成的标量值。</li>
+<li>下载数据到主机并与手动创建的矩阵数据进行比较。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>AscendMat 对象应成功设置所有元素，并且与主机上的期望数据一致。</li>
+</ul>
+<p><strong>AscendMat 的 convertTo 方法测试</strong>
+<strong>测试目的</strong>:</p>
+<ul>
+<li>验证 AscendMat 的 convertTo 方法能否正确转换矩阵数据类型。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个 AscendMat 对象，并使用随机生成的标量值初始化。</li>
+<li>使用 convertTo 方法将矩阵数据类型转换为另一个类型。</li>
+<li>下载数据到主机并与手动创建的转换后矩阵进行比较。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>AscendMat
+对象应成功转换数据类型，且转换后的数据与主机上的期望数据一致。</li>
+</ul>
+<p><strong>合并测试（MERGE）</strong> <strong>测试目的</strong>:</p>
+<ul>
+<li>验证merge函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建三个单通道的矩阵m1、m2和m3。</li>
+<li>使用merge函数在CPU上合并这三个矩阵为一个多通道矩阵。</li>
+<li>在Ascend后端上分别通过数组和向量的方式合并矩阵，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的合并结果应与CPU的结果一致。</li>
+</ul>
+<h4 id="算术算法验证">9.1.2 算术算法验证</h4>
+<p>算术算法需要验证一下几种类型：</p>
+<p><strong>基础矩阵运算操作</strong>:</p>
+<ul>
+<li>测试包括矩阵加法、减法、乘法、除法、按位与、按位或、按位异或等操作。</li>
+<li>验证以上操作在 Ascend 设备与 CPU 上的结果一致性。</li>
+</ul>
+<p><strong>带掩码的矩阵运算</strong>:</p>
+<ul>
+<li>验证矩阵运算操作在引入掩码后的正确性，包括掩码的生成与使用。</li>
+</ul>
+<p><strong>带缩放参数的矩阵运算</strong>:</p>
+<ul>
+<li>验证矩阵乘法和除法操作在引入缩放参数后的正确性。</li>
+</ul>
+<p><strong>流管理</strong>:</p>
+<ul>
+<li>测试 Ascend Stream
+的创建、运算调度与结果同步功能，确保异步处理与同步处理的结果一致。</li>
+</ul>
+<p>测试方法如下：</p>
+<p><strong>测试目的</strong>:</p>
+<ul>
+<li>验证加法、减法、乘法、除法、按位与、按位或、按位异或，加权和，阈值计算等操作方法计算结果是否正确。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个矩阵对象，并使用随机数据进行填充。</li>
+<li>使用需要验证的算法进行计算，分别使用默认流，以及显式创建的流进行计算。</li>
+<li>比较CPU和Ascend后端的结果，确保他们的精度一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的合并结果应与CPU的结果一致。</li>
+</ul>
+<h4 id="图像核心算法验证">9.1.3 图像核心算法验证</h4>
+<p><strong>拆分测试（SPLIT）</strong> <strong>测试目的</strong>:</p>
+<ul>
+<li>验证split函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个多通道的矩阵m，并使用split函数在CPU上将其拆分为三个单通道矩阵。</li>
+<li>使用Ascend后端进行同样的拆分操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的拆分结果应与CPU的结果一致。</li>
+</ul>
+<p><strong>转置测试（TRANSPOSE）</strong> <strong>测试目的</strong>:</p>
+<ul>
+<li>验证transpose函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个随机矩阵cpuMat。</li>
+<li>使用transpose函数在CPU上转置矩阵，并存储结果。</li>
+<li>在Ascend后端上进行相同的转置操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的转置结果应与CPU的结果一致。</li>
+</ul>
+<p><strong>翻转测试（FLIP）</strong> <strong>测试目的</strong>:</p>
+<ul>
+<li>验证flip函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个随机矩阵cpuMat。</li>
+<li>使用flip函数在CPU上分别以不同的翻转模式（水平、垂直、同时翻转）进行翻转，并存储结果。</li>
+<li>在Ascend后端上执行相同的翻转操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的翻转结果应与CPU的结果一致。</li>
+</ul>
+<p><strong>旋转测试（ROTATE）</strong> <strong>测试目的</strong>:</p>
+<ul>
+<li>验证rotate函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个随机矩阵cpuMat。</li>
+<li>使用rotate函数在CPU上以不同的旋转模式进行旋转，并存储结果。</li>
+<li>在Ascend后端上进行相同的旋转操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的旋转结果应与CPU的结果一致。</li>
+</ul>
+<p><strong>裁剪测试（CROP）</strong> <strong>测试目的</strong>:</p>
+<ul>
+<li>验证裁剪操作在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个矩阵cpuMat，并定义一个裁剪区域Rect b。</li>
+<li>使用Mat对象在CPU上执行裁剪操作，并存储结果。</li>
+<li>在Ascend后端上执行相同的裁剪操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的裁剪结果应与CPU的结果一致。</li>
+</ul>
+<p><strong>调整大小测试（RESIZE）</strong>
+<strong>测试目的</strong>:</p>
+<ul>
+<li>验证resize函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个随机矩阵cpuMat。</li>
+<li>使用resize函数在CPU上对矩阵进行调整大小操作，使用不同的插值方法，并存储结果。</li>
+<li>在Ascend后端上进行相同的调整大小操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的调整大小结果应与CPU的结果一致。</li>
+</ul>
+<p><strong>裁剪及调整大小测试（CROP_RESIZE）</strong>
+<strong>测试目的</strong>:</p>
+<ul>
+<li>验证cropResize函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个随机矩阵cpuMat，并定义裁剪区域Rect b，目的矩阵大小Size
+dsize。</li>
+<li>依次使用crop和resize函数在CPU上对矩阵进行裁剪和调整大小操作，使用不同的插值方法，并存储结果。</li>
+<li>在Ascend后端上调用cropResize函数执行相同操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的调整大小结果应与CPU的结果一致。</li>
+</ul>
+<p><strong>裁剪及调整大小测试（COPY_MAKE_BORDER）</strong>
+<strong>测试目的</strong>:</p>
+<ul>
+<li>验证copyMakeborder函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个随机矩阵cpuMat，并定义top、bottom、left、right四个方向的border宽度。</li>
+<li>使用copyMakeBorder函数在CPU上对矩阵进行填充边框操作，使用不同的边框填充插值方法，并存储结果。</li>
+<li>在Ascend后端上调用copyMakeborder函数执行相同操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的调整大小结果应与CPU的结果一致。</li>
+</ul>
+<p><strong>裁剪及调整大小测试（CROP_RESIZE_MAKE_BORDER）</strong>
+<strong>测试目的</strong>:</p>
+<ul>
+<li>验证cropResizeMakeborder函数在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>创建一个随机矩阵cpuMat，并定义裁剪区域Rect b，目的矩阵大小Size
+dsize，top、bottom、left、right四个方向的border宽度。</li>
+<li>依次使用crop、resize和copyMakeBorder函数在CPU上对矩阵进行裁剪、调整大小和填充边框操作，使用不同的边框填充插值方法，并存储结果。</li>
+<li>在Ascend后端上调用cropResizeMakeborder函数执行相同操作，并将结果下载到主机端。</li>
+<li>比较CPU和Ascend后端的结果，确保它们一致。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的调整大小结果应与CPU的结果一致。</li>
+</ul>
+<h4 id="色域转换算法验证">9.1.4 色域转换算法验证</h4>
+<p>色域转换算法验证需要覆盖以下转换操作：</p>
+<ul>
+<li>BGR到BGRA</li>
+<li>BGRA到BGR</li>
+<li>BGR到RGBA</li>
+<li>RGBA到BGR</li>
+<li>BGR到RGB</li>
+<li>BGRA到RGBA</li>
+<li>BGR到灰度图</li>
+<li>RGB到灰度图</li>
+<li>灰度图到BGR</li>
+<li>灰度图到BGRA</li>
+<li>BGRA到灰度图</li>
+<li>RGBA到灰度图</li>
+<li>RGB到XYZ</li>
+<li>BGR到XYZ</li>
+<li>XYZ到BGR</li>
+<li>XYZ到RGB</li>
+<li>BGR到YCrCb</li>
+<li>RGB到YCrCb</li>
+<li>YCrCb到BGR</li>
+<li>YCrCb到RGB</li>
+<li>BGR到YUV</li>
+<li>RGB到YUV</li>
+<li>YUV到BGR</li>
+<li>YUV到RGB</li>
+</ul>
+<p><strong>测试目的</strong>:</p>
+<ul>
+<li>验证色域转换操作在Ascend后端的实现是否与CPU一致。</li>
+</ul>
+<p><strong>测试步骤</strong>:</p>
+<ol type="1">
+<li>生成随机图像矩阵。</li>
+<li>执行颜色空间转换。</li>
+<li>比较CPU和NPU计算结果，确认在允许误差范围内。</li>
+</ol>
+<p><strong>预期结果</strong>:</p>
+<ul>
+<li>Ascend后端的计算结果应与CPU的结果一致。</li>
+</ul>
+<h4 id="其他说明">9.1.5 其他说明</h4>
+<p>所有功能测试需要同步测试C++接口以及Python接口，保证二者可用性及准确性。</p>
+<h3 id="性能测试">9.2 性能测试</h3>
+<p>性能测试使用OpenCV性能测试框架，使用不同图像大小，不同图像数据类型，将数据在Ascend
+NPU上执行多次，计算每次运行的平均时间。</p>
+<p><strong>初始化</strong>:</p>
+<ol type="1">
+<li>生成给定尺寸的测试矩阵。</li>
+<li>构造随机输入矩阵，并完成算子预热。</li>
+</ol>
+<p><strong>Ascend NPU 测试</strong>:</p>
+<ol type="1">
+<li>设置 Ascend 设备 (cv::cann::setDevice)，并上传矩阵至
+AscendMat。</li>
+<li>在 TEST_CYCLE() 内执行操作（如 merge、split 等）。</li>
+<li>复位 Ascend 设备 (cv::cann::resetDevice)。</li>
+</ol>
+<p><strong>CPU 测试</strong>:</p>
+<ul>
+<li>使用 OpenCV 自带的方法执行相同操作。</li>
+</ul>
+<p><strong>验证</strong>:</p>
+<ul>
+<li>每个测试用例执行完后，通过 SANITY_CHECK_NOTHING() 检查无异常。</li>
+</ul>
+<p><strong>性能验证结果如下</strong>：</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 26%" />
+<col style="width: 9%" />
+<col style="width: 9%" />
+<col style="width: 13%" />
+<col style="width: 7%" />
+<col style="width: 13%" />
+</colgroup>
+<thead>
+<tr>
+<th>算子/平均运算耗时*(ms)</th>
+<th>CPU</th>
+<th>GPU</th>
+<th>NPU</th>
+<th>相对CPU性能提升</th>
+<th></th>
+<th>相对GPU性能提升</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>16 Intel(R) Xeon(R) Gold 6151</td>
+<td>Nvidia V100</td>
+<td>Ascend 310P</td>
+<td>GPU</td>
+<td>NPU</td>
+<td>NPU</td>
+</tr>
+<tr>
+<td>merge</td>
+<td>83.50</td>
+<td>48.00</td>
+<td>30.50</td>
+<td>42.51%</td>
+<td>63.47%</td>
+<td>36.46%</td>
+</tr>
+<tr>
+<td>split</td>
+<td>142.00</td>
+<td>59.00</td>
+<td>81.50</td>
+<td>58.45%</td>
+<td>42.61%</td>
+<td>-38.14%</td>
+</tr>
+<tr>
+<td>flip</td>
+<td>221.25</td>
+<td>77.75</td>
+<td>1069.00</td>
+<td>64.86%</td>
+<td>-383.16%</td>
+<td>-1274.92%</td>
+</tr>
+<tr>
+<td>crop</td>
+<td>49.25</td>
+<td>61.50</td>
+<td>75.75</td>
+<td>-24.87%</td>
+<td>-53.81%</td>
+<td>-23.17%</td>
+</tr>
+<tr>
+<td>transpose</td>
+<td>446.00</td>
+<td>84.50</td>
+<td>277.50</td>
+<td>81.05%</td>
+<td>37.78%</td>
+<td>-228.40%</td>
+</tr>
+<tr>
+<td>resize</td>
+<td>136.50</td>
+<td>188.75</td>
+<td>229.75</td>
+<td>-38.28%</td>
+<td>-68.32%</td>
+<td>-21.72%</td>
+</tr>
+<tr>
+<td>threshold</td>
+<td>172.75</td>
+<td>174.00</td>
+<td>251.50</td>
+<td>-0.72%</td>
+<td>-45.59%</td>
+<td>-44.54%</td>
+</tr>
+<tr>
+<td>rotate</td>
+<td>584.50</td>
+<td>76.50</td>
+<td>1067.50</td>
+<td>86.91%</td>
+<td>-82.63%</td>
+<td>-1295.42%</td>
+</tr>
+<tr>
+<td>add</td>
+<td>529.63</td>
+<td>324.50</td>
+<td>268.75</td>
+<td>38.73%</td>
+<td>49.26%</td>
+<td>17.18%</td>
+</tr>
+<tr>
+<td>addWeighted</td>
+<td>553.88</td>
+<td>326.38</td>
+<td>422.88</td>
+<td>41.07%</td>
+<td>23.65%</td>
+<td>-29.57%</td>
+</tr>
+<tr>
+<td>subtract</td>
+<td>528.25</td>
+<td>355.63</td>
+<td>269.75</td>
+<td>32.68%</td>
+<td>48.94%</td>
+<td>24.15%</td>
+</tr>
+<tr>
+<td>multiply</td>
+<td>534.63</td>
+<td>354.25</td>
+<td>265.88</td>
+<td>33.74%</td>
+<td>50.27%</td>
+<td>24.95%</td>
+</tr>
+<tr>
+<td>divide</td>
+<td>542.50</td>
+<td>355.63</td>
+<td>266.75</td>
+<td>34.45%</td>
+<td>50.83%</td>
+<td>24.99%</td>
+</tr>
+<tr>
+<td>bitwise_add</td>
+<td>529.25</td>
+<td>355.13</td>
+<td>266.00</td>
+<td>32.90%</td>
+<td>49.74%</td>
+<td>25.10%</td>
+</tr>
+<tr>
+<td>bitwise_or</td>
+<td>529.50</td>
+<td>354.63</td>
+<td>266.00</td>
+<td>33.03%</td>
+<td>49.76%</td>
+<td>24.99%</td>
+</tr>
+<tr>
+<td>bitwise_xor</td>
+<td>529.88</td>
+<td>354.50</td>
+<td>268.00</td>
+<td>33.10%</td>
+<td>49.42%</td>
+<td>24.40%</td>
+</tr>
+<tr>
+<td>bitwise_not</td>
+<td>324.38</td>
+<td>177.38</td>
+<td>448.38</td>
+<td>45.32%</td>
+<td>-38.23%</td>
+<td>-152.78%</td>
+</tr>
+<tr>
+<td>cvtColor</td>
+<td>57.31</td>
+<td>66.96</td>
+<td>118.76</td>
+<td>-16.83%</td>
+<td>-107.21%</td>
+<td>-77.35%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="ci">9.3. CI</h3>
+<p>OpenCV社区没有昇腾测试设备，后续昇腾相关特性提交需要经过昇腾设备的CI验证。</p>
+<ol type="1">
+<li>向社区贡献昇腾机器用于CI验证。</li>
+<li>使用PR label的方式，仅针对昇腾相关特性运行CI。</li>
+<li>使用容器的方式运行CI，将Dockerfile合入OpenCV的基础设施仓库，并归档容器镜像。</li>
+<li>配置github workflow，配置昇腾CI相关逻辑。</li>
+</ol>
+<h2 id="教程">10. 教程</h2>
+<h3 id="样例">10.1 样例</h3>
+<p>为了方便用户使用该模块，需要提供调用样例，选择一个常见的图像预处理逻辑，实现C++版本以及Python版本的样例代码。</p>
+<h3 id="使用文档">10.2 使用文档</h3>
+<p>按照社区的文档规范，编写模块使用指南，该使用指南将会构建到OpenCV
+doc中，作为教程供用户参考。</p>
+<table>
+<colgroup>
+<col style="width: 88%" />
+<col style="width: 11%" />
+</colgroup>
+<thead>
+<tr>
+<th>PR</th>
+<th>代码量</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/opencv/opencv_contrib"></a><a
+target="_blank" rel="noopener" href="https://github.com/opencv/opencv_contrib/pull/3552">Add operators
+support for Ascend NPU (CANN backend)</a></td>
+<td>+5880 -0</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/opencv/opencv/pull/24488">Link
+lib_acl_op_compiler when compile with CANN</a></td>
+<td>+12 -0</td>
+</tr>
+<tr>
+<td><a
+target="_blank" rel="noopener" href="https://github.com/opencv-infrastructure/opencv-gha-dockerfile/pull/24">Base
+OpenEuler 22.03.SP2 docker image for CI.</a></td>
+<td>+71 -0</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/opencv/ci-gha-workflow/pull/120">Added
+CI pipeline with openEuler22.03.SP2 and Ascend310</a></td>
+<td>+120 -0</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/opencv/opencv_contrib/pull/3614">Enable
+AscendC kernel operator</a></td>
+<td>+697 -92</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/opencv/ci-gha-workflow/pull/132">Update
+openEuler image tag</a></td>
+<td>+1 -1</td>
+</tr>
+</tbody>
+</table>
+<p><a
+target="_blank" rel="noopener" href="https://ascend.github.io/docs/sources/opencv/install.html">OpenCV昇腾开源使用手册</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/11/12/llama-cpp%E6%98%87%E8%85%BE%E5%8E%9F%E7%94%9F%E6%94%AF%E6%8C%81/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -3378,156 +4721,6 @@ target="_blank" rel="noopener" href="https://github.com/mpi4py/mpi4py/issues/343
 <p><strong>reduce</strong> 将收集到的数据进行规约，例如SUM，MAX等</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mpi4py <span class="keyword">import</span> MPI</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">comm = MPI.COMM_WORLD</span><br><span class="line">rank = comm.Get_rank()</span><br><span class="line">size = comm.Get_size()</span><br><span class="line"></span><br><span class="line">recv_data = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    matrix = np.random.randint(-<span class="number">9</span>, <span class="number">9</span>, size=(<span class="number">10</span>, <span class="number">10</span>))</span><br><span class="line">    line = np.array_split(matrix, <span class="number">10</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; prepare random matrix &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, matrix))</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    line = <span class="literal">None</span></span><br><span class="line">line = comm.scatter(line)</span><br><span class="line">sum_result = comm.reduce(line, op=MPI.SUM)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> rank == <span class="number">0</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;process &#123;&#125; get calculated sum result &#123;&#125;&quot;</span>.<span class="built_in">format</span>(rank, sum_result))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">process 0 prepare random matrix </span><br><span class="line">[[ 2 -9 -9 -8 -9 -8 -7  8 -6  5]</span><br><span class="line"> [ 0  6  6 -2 -6  4 -5 -7  3 -4]</span><br><span class="line"> [-9  2  6 -5 -1 -6  5 -2  3  4]</span><br><span class="line"> [ 7  4 -6 -5  1  4 -5  5 -1  1]</span><br><span class="line"> [ 1  2 -8 -7  5  2 -6 -4  5 -8]</span><br><span class="line"> [-8  0  7  1  0 -8  3 -8 -2  3]</span><br><span class="line"> [ 6  5  2 -7 -6 -3 -7  4  2 -1]</span><br><span class="line"> [ 2 -8  8 -1 -3 -9  0  4 -9 -9]</span><br><span class="line"> [-4 -7 -1 -8  4  7  1  6  4  5]</span><br><span class="line"> [-2  6  3  3  7  7 -4  1 -7 -3]]</span><br><span class="line"> </span><br><span class="line">process 0 get calculated sum result [[ -5   1   8 -39  -8 -10 -25   7  -8  -7]]</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/12/DeepSpeed-%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
-      <meta itemprop="name" content="hipudding">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="hipudding's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | hipudding's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/06/12/DeepSpeed-%E5%AE%89%E8%A3%85%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">DeepSpeed 安装使用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-06-12 16:57:33" itemprop="dateCreated datePublished" datetime="2023-06-12T16:57:33+08:00">2023-06-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-06-19 09:24:00" itemprop="dateModified" datetime="2023-06-19T09:24:00+08:00">2023-06-19</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="deepspeedubuntucpu">DeepSpeed+Ubuntu+CPU</h2>
-<p>目前CPU支持很有限，仅支持部分推理。环境配置可参考<a
-target="_blank" rel="noopener" href="https://github.com/microsoft/DeepSpeed/commit/1f72082fc0ea159d0de46886d8e713dda7df9ce2#diff-69a0fa9b9a28351868fc14c345088d9af3cf3560538482a386dc616ebc023fe3">CI配置</a></p>
-<p><strong>安装intel_extension_for_pytorch</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python -m pip install intel_extension_for_pytorch</span><br><span class="line">python -m pip install oneccl_bind_pt==2.0 -f https://developer.intel.com/ipex-whl-stable-cpu</span><br></pre></td></tr></table></figure>
-<p><strong>安装oneCCL</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/oneapi-src/oneCCL</span><br><span class="line">cd oneCCL</span><br><span class="line">mkdir build</span><br><span class="line">cd build</span><br><span class="line">cmake ..</span><br><span class="line">make</span><br><span class="line">make install</span><br><span class="line">source ./_install/env/setvars.sh</span><br></pre></td></tr></table></figure>
-<p><strong>安装Transformers(用于跑用例)</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/huggingface/transformers</span><br><span class="line">cd transformers</span><br><span class="line">git rev-parse --short HEAD</span><br><span class="line">pip install .</span><br></pre></td></tr></table></figure>
-<p><strong>安装DeepSpeed</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install DeepSpeed</span><br></pre></td></tr></table></figure>
-<p><strong>ds_report</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">--------------------------------------------------</span><br><span class="line">DeepSpeed C++/CUDA extension op report</span><br><span class="line">--------------------------------------------------</span><br><span class="line">NOTE: Ops not installed will be just-in-time (JIT) compiled at</span><br><span class="line">      runtime if needed. Op compatibility means that your system</span><br><span class="line">      meet the required dependencies to JIT install the op.</span><br><span class="line">--------------------------------------------------</span><br><span class="line">JIT compiled ops requires ninja</span><br><span class="line">ninja .................. [OKAY]</span><br><span class="line">--------------------------------------------------</span><br><span class="line">op name ................ installed .. compatible</span><br><span class="line">--------------------------------------------------</span><br><span class="line">deepspeed_not_implemented  [NO] ....... [OKAY]</span><br><span class="line">deepspeed_ccl_comm ....... [NO] ....... [OKAY]</span><br><span class="line">--------------------------------------------------</span><br><span class="line">DeepSpeed general environment info:</span><br><span class="line">torch install path ............... [&#x27;/home/hua/anaconda3/lib/python3.10/site-packages/torch&#x27;]</span><br><span class="line">torch version .................... 2.0.1+cu117</span><br><span class="line">deepspeed install path ........... [&#x27;/home/hua/anaconda3/lib/python3.10/site-packages/deepspeed&#x27;]</span><br><span class="line">deepspeed info ................... 0.9.4+e5fe5f65, e5fe5f65, master</span><br><span class="line">deepspeed wheel compiled w. ...... torch 0.0</span><br></pre></td></tr></table></figure>
-<h2 id="deepspeedubuntugpu">DeepSpeed+Ubuntu+GPU</h2>
-<p><strong>操作系统</strong></p>
-<p>华为云上gpu的镜像是16.04的，很多依赖的软件版本过低，建议升级到20.04，DeepSpeedExample有些需要高版本的glibc，可以直接升级到22.04。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line">sudo apt-get upgrade</span><br><span class="line">sudo apt-get dist-upgrade</span><br><span class="line">sudo do-release-upgrade</span><br></pre></td></tr></table></figure>
-<p><strong>GPU驱动和cuda</strong></p>
-<ul>
-<li><p><a
-target="_blank" rel="noopener" href="https://www.nvidia.cn/Download/index.aspx?lang=cn">驱动下载页面</a>选择相应的型号，选择cuda
-11.7</p></li>
-<li><p><a
-target="_blank" rel="noopener" href="https://developer.nvidia.com/cuda-11-7-0-download-archive?target_os=Linux&amp;target_arch=x86_64&amp;Distribution=Ubuntu&amp;target_version=22.04&amp;target_type=runfile_local">CUDA
-toolkit下载页面</a>选择系统版本，然后下载runfile（使用apt总是会升级驱动和cuda到最新版本，所以直接下载二进制安装）。</p></li>
-</ul>
-<p><strong>pip源</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple</span><br></pre></td></tr></table></figure>
-<p><strong>安装<a
-target="_blank" rel="noopener" href="https://pytorch.org/get-started/previous-versions/">pytorch</a></strong></p>
-<p>DeepSpeed
-0.9.2（pip版本）目前依赖的是pytorch1.13.1，安装对应的版本。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install torch==1.13.1+cu117 torchvision==0.14.1+cu117 torchaudio==0.13.1 --extra-index-url https://download.pytorch.org/whl/cu117</span><br></pre></td></tr></table></figure>
-<p><strong>triton==1.0.0</strong></p>
-<p>DeepSpeed依赖triton版本是1.0.0，pip仓库无法直接安装，git上下载源码编译安装。</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">编译依赖</span></span><br><span class="line">sudo apt-get install llvm-11 llvm-11-*</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">源码安装</span></span><br><span class="line">wget https://github.com/openai/triton/archive/refs/tags/v1.0.zip</span><br><span class="line">unzip v1.0.zip</span><br><span class="line">cd triton/python</span><br><span class="line">pip install cmake</span><br><span class="line">pip install .</span><br></pre></td></tr></table></figure>
-<p><strong>安装DeepSpeed</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">预编译算子(编译不通过：https://github.com/microsoft/DeepSpeed/issues/425)</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">workground: Setting NVCC_PREPEND_FLAGS=<span class="string">&quot;--forward-unknown-opts&quot;</span></span></span><br><span class="line">DS_BUILD_OPS=1 pip install deepspeed --global-option=&quot;build_ext&quot; --global-option=&quot;-j8&quot;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">JIT_load</span></span><br><span class="line">pip install deepspeed</span><br></pre></td></tr></table></figure>
-<p><strong>ds_report</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">--------------------------------------------------</span><br><span class="line">DeepSpeed C++/CUDA extension op report</span><br><span class="line">--------------------------------------------------</span><br><span class="line">NOTE: Ops not installed will be just-in-time (JIT) compiled at</span><br><span class="line">      runtime if needed. Op compatibility means that your system</span><br><span class="line">      meet the required dependencies to JIT install the op.</span><br><span class="line">--------------------------------------------------</span><br><span class="line">JIT compiled ops requires ninja</span><br><span class="line">ninja .................. [OKAY]</span><br><span class="line">--------------------------------------------------</span><br><span class="line">op name ................ installed .. compatible</span><br><span class="line">--------------------------------------------------</span><br><span class="line">async_io ............... [NO] ....... [OKAY]</span><br><span class="line">cpu_adagrad ............ [NO] ....... [OKAY]</span><br><span class="line">cpu_adam ............... [NO] ....... [OKAY]</span><br><span class="line">fused_adam ............. [NO] ....... [OKAY]</span><br><span class="line">fused_lamb ............. [NO] ....... [OKAY]</span><br><span class="line">quantizer .............. [NO] ....... [OKAY]</span><br><span class="line">random_ltd ............. [NO] ....... [OKAY]</span><br><span class="line">sparse_attn ............ [NO] ....... [OKAY]</span><br><span class="line">spatial_inference ...... [NO] ....... [OKAY]</span><br><span class="line">transformer ............ [NO] ....... [OKAY]</span><br><span class="line">stochastic_transformer . [NO] ....... [OKAY]</span><br><span class="line">transformer_inference .. [NO] ....... [OKAY]</span><br><span class="line">utils .................. [NO] ....... [OKAY]</span><br><span class="line">--------------------------------------------------</span><br><span class="line">DeepSpeed general environment info:</span><br><span class="line">torch install path ............... [&#x27;/home/hua/anaconda3/lib/python3.10/site-packages/torch&#x27;]</span><br><span class="line">torch version .................... 1.13.1+cu117</span><br><span class="line">deepspeed install path ........... [&#x27;/home/hua/anaconda3/lib/python3.10/site-packages/deepspeed&#x27;]</span><br><span class="line">deepspeed info ................... 0.9.2, unknown, unknown</span><br><span class="line">torch cuda version ............... 11.7</span><br><span class="line">torch hip version ................ None</span><br><span class="line">nvcc version ..................... 11.7</span><br><span class="line">deepspeed wheel compiled w. ...... torch 1.13, cuda 11.7</span><br></pre></td></tr></table></figure>
-<p><strong>运行例子</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/microsoft/DeepSpeedExamples.git</span><br><span class="line">cd DeepSpeedExamples/training/cifar</span><br><span class="line">./run_ds.py</span><br></pre></td></tr></table></figure>
-<p>python报错，修改方法：</p>
-<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">diff --git a/training/cifar/cifar10_deepspeed.py b/training/cifar/cifar10_deepspeed.py</span></span><br><span class="line"><span class="comment">index 33ea569..d1117c3 100755</span></span><br><span class="line"><span class="comment">--- a/training/cifar/cifar10_deepspeed.py</span></span><br><span class="line"><span class="comment">+++ b/training/cifar/cifar10_deepspeed.py</span></span><br><span class="line"><span class="meta">@@ -159,7 +159,7 @@</span> def imshow(img):</span><br><span class="line"></span><br><span class="line"> # get some random training images</span><br><span class="line"> dataiter = iter(trainloader)</span><br><span class="line"><span class="deletion">-images, labels = dataiter.next()</span></span><br><span class="line"><span class="addition">+images, labels = next(dataiter)</span></span><br><span class="line"></span><br><span class="line"> # show images</span><br><span class="line"> imshow(torchvision.utils.make_grid(images))</span><br><span class="line"><span class="meta">@@ -309,7 +309,7 @@</span> print(&#x27;Finished Training&#x27;)</span><br><span class="line"> # Okay, first step. Let us display an image from the test set to get familiar.</span><br><span class="line"></span><br><span class="line"> dataiter = iter(testloader)</span><br><span class="line"><span class="deletion">-images, labels = dataiter.next()</span></span><br><span class="line"><span class="addition">+images, labels = next(dataiter)</span></span><br><span class="line"></span><br><span class="line"> # print images</span><br><span class="line"> imshow(torchvision.utils.make_grid(images))</span><br><span class="line"><span class="comment">diff --git a/training/cifar/cifar10_tutorial.py b/training/cifar/cifar10_tutorial.py</span></span><br><span class="line"><span class="comment">index 2154e36..114e8c5 100644</span></span><br><span class="line"><span class="comment">--- a/training/cifar/cifar10_tutorial.py</span></span><br><span class="line"><span class="comment">+++ b/training/cifar/cifar10_tutorial.py</span></span><br><span class="line"><span class="meta">@@ -110,7 +110,7 @@</span> def imshow(img):</span><br><span class="line"></span><br><span class="line"> # get some random training images</span><br><span class="line"> dataiter = iter(trainloader)</span><br><span class="line"><span class="deletion">-images, labels = dataiter.next()</span></span><br><span class="line"><span class="addition">+images, labels = next(dataiter)</span></span><br><span class="line"></span><br><span class="line"> # show images</span><br><span class="line"> imshow(torchvision.utils.make_grid(images))</span><br><span class="line"><span class="meta">@@ -219,7 +219,7 @@</span> torch.save(net.state_dict(), PATH)</span><br><span class="line"> # Okay, first step. Let us display an image from the test set to get familiar.</span><br><span class="line"></span><br><span class="line"> dataiter = iter(testloader)</span><br><span class="line"><span class="deletion">-images, labels = dataiter.next()</span></span><br><span class="line"><span class="addition">+images, labels = next(dataiter)</span></span><br><span class="line"></span><br><span class="line"> # print images</span><br><span class="line"> imshow(torchvision.utils.make_grid(images))</span><br></pre></td></tr></table></figure>
-<h2 id="简单模型改写为deepspeed">简单模型改写为DeepSpeed</h2>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line">with_ds = <span class="literal">True</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> with_ds:</span><br><span class="line">    <span class="keyword">import</span> deepspeed</span><br><span class="line"></span><br><span class="line">device = torch.device(<span class="string">&#x27;cuda&#x27;</span> <span class="keyword">if</span> torch.cuda.is_available() <span class="keyword">else</span> <span class="string">&#x27;cpu&#x27;</span>)</span><br><span class="line"></span><br><span class="line">x_data = torch.tensor([[<span class="number">1.0</span>], [<span class="number">2.0</span>], [<span class="number">3.0</span>]]).to(device)</span><br><span class="line">y_data = torch.tensor([[<span class="number">2.0</span>], [<span class="number">4.0</span>], [<span class="number">6.0</span>]]).to(device)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">LinearModel</span>(torch.nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>(LinearModel, self).__init__()</span><br><span class="line">        self.linear = torch.nn.Linear(<span class="number">1</span>, <span class="number">1</span>).to(device)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, x</span>):</span><br><span class="line">        y_pred = self.linear(x)</span><br><span class="line">        <span class="keyword">return</span> y_pred</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">model = LinearModel()</span><br><span class="line">criterion = torch.nn.MSELoss(size_average=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> with_ds:</span><br><span class="line">    optimizer = torch.optim.SGD(model.parameters(), lr=<span class="number">0.01</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    ds_config = &#123;</span><br><span class="line">        <span class="string">&quot;train_micro_batch_size_per_gpu&quot;</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="string">&quot;optimizer&quot;</span>: &#123;</span><br><span class="line">            <span class="string">&quot;type&quot;</span>: <span class="string">&quot;SGD&quot;</span>,</span><br><span class="line">            <span class="string">&quot;params&quot;</span>: &#123;</span><br><span class="line">                <span class="string">&quot;lr&quot;</span>: <span class="number">1e-2</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    model, _, _, _ = deepspeed.initialize(model=model, model_parameters=model.parameters(), config=ds_config)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> epoch <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    y_pred = model(x_data)</span><br><span class="line">    loss = criterion(y_pred, y_data)</span><br><span class="line">    <span class="built_in">print</span>(epoch, loss.item())</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> with_ds:</span><br><span class="line">        optimizer.zero_grad()</span><br><span class="line">        loss.backward()</span><br><span class="line">        optimizer.step()</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        model.backward(loss)</span><br><span class="line">        model.step()</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;w = &#x27;</span>, model.linear.weight.item())</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;b = &#x27;</span>, model.linear.bias.item())</span><br><span class="line"></span><br><span class="line">x_test = torch.tensor([[<span class="number">4.0</span>]]).to(device)</span><br><span class="line">y_test = model(x_test)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;y_pred = &#x27;</span>, y_test.data)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p><strong>DeepSpeed基本执行流程</strong></p>
-<p><em>这个简单的模型实际上还是完全调用的pytorch的函数，ds包的wapper其实啥都没干，完全透传</em></p>
-<ol type="1">
-<li>首先获取Accelerator（加速器），判断能不能import
-intel_extension_for_deepspeed，如果能就用XPU，如果不能就用CUDA（Accelerator将设备管理，内存管理，Tensor等等进行了抽象，不同的后端设备继承实现），高版本这部分逻辑有改变，可以通过环境变量控制。<strong>切入点1，这里需要判断是否能够使用npu</strong></li>
-<li>选择并行计算后端，如果Torch.distributed已经初始化，则使用直接使用，检查是否在Aure或者aws机器上，针对这些机器做环境变量配置，否则尝试寻找mpi，然后根据Accelerator的comm
-backend类型初始化TorchBackend.<strong>切入点2，这里需要针对华为云机器做专门的环境变量配置，以及支持昇腾并行后端</strong></li>
-<li>解析ds的配置文件</li>
-<li>创建ds引擎
-<ol type="1">
-<li>检查环境变量，配置dist相关配置，包括rank，world size 等等</li>
-<li>用dist分发模型参数，所有进程同步模型参数</li>
-<li>根据配置创建optimizer，例如，上例中，就会生成torch自带的SGD优化器，也可以指定ds提供的Adam，lamb等优化器</li>
-<li>配置checkpoint</li>
-<li>编译Utils，就是flateen_unflateen.cpp</li>
-</ol></li>
-<li>执行forward，计算损失
-<strong>切入点3，以下基本调用的都是pytorch的optimizer，这些需要pytorch有昇腾支持，另外，DS提供的优化器也需要昇腾支持</strong></li>
-<li>反向传播
-<ol type="1">
-<li>梯度累加</li>
-<li>根据是否使用zero优化，自动精度，混合精度等调用optimizer其他wapper的backward，并传入合适的参数</li>
-<li>多进程计算梯度并收集结果</li>
-</ol></li>
-<li>更新参数
-<ol type="1">
-<li>如果到了梯度累加的预制，根据不同的配置，最终调用optimizer.step更新参数，并清空梯度信息</li>
-</ol></li>
-</ol>
 
       
     </div>
