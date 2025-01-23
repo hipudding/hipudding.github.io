@@ -138,6 +138,221 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/06/%E5%89%8D%E5%90%91-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD-%E9%93%BE%E5%BC%8F%E6%B3%95%E5%88%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
+      <meta itemprop="name" content="hipudding">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/06/06/%E5%89%8D%E5%90%91-%E5%8F%8D%E5%90%91%E4%BC%A0%E6%92%AD-%E9%93%BE%E5%BC%8F%E6%B3%95%E5%88%99/" class="post-title-link" itemprop="url">前向&反向传播&链式法则</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-06-06 11:23:51 / 修改时间：13:06:25" itemprop="dateCreated datePublished" datetime="2023-06-06T11:23:51+08:00">2023-06-06</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="神经网络">神经网络</h2>
+<p><strong>通俗理解</strong>，神经网络就是给一组输入，经过神经网络的运算后，得到一个在误差范围内的结果。模型的选择和对模型中各个神经元的系数的确定决定了模型的输出结果，为了得到期望的结果，需要有多组输入，和对应的正确结果，用这些数据来训练模型，确定合适的参数组合。参数确定后，即可预测新的输入对应的输出。</p>
+<p>举一个简单的例子，两个神经元组成一个一层的神经网络，给定的两个输入，能够得到一个结果。</p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230601142530229.png"
+alt="image-20230601142530229" />
+<figcaption aria-hidden="true">image-20230601142530229</figcaption>
+</figure>
+<h2 id="前向传播">前向传播</h2>
+<p><strong>通俗理解</strong>前向传播，就是根据输入计算输出的过程。按上述例子来说，就是
+<span class="math display">\[
+net_o = i1×w1+b1 + i2×w2+b2
+\]</span> 假定输入数据为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i1 = 0.05, i2 = 0.10;</span><br><span class="line">w1 = 0.15, w2 = 0.20;</span><br><span class="line">b1 = 0.35, b2 = 0.60.</span><br></pre></td></tr></table></figure>
+<p>那么： <span class="math display">\[
+net_o = i1×w1+b1 + i2×w2+b2 = 0.05×0.15+0.35+0.10*0.20+0.60=0.9775
+\]</span> 假定选择sigmoid函数作为激活函数，那么 <span
+class="math display">\[
+out_o =
+\frac{1}{1+\epsilon^{net_o}}=\frac{1}{1+\epsilon^{0.9775}}=0.2734
+\]</span></p>
+<p>如果此时我们期望的输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">o=0.01</span><br></pre></td></tr></table></figure>
+<p>误差为 <span class="math display">\[
+o-out_o=0.01-0.2734=-0.2634
+\]</span></p>
+<h2 id="梯度下降法">梯度下降法</h2>
+<p>考虑一个抛物线函数： <span class="math display">\[
+y=f(x)^2
+\]</span></p>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20230601151845547.png"
+alt="image-20230601151845547" />
+<figcaption aria-hidden="true">image-20230601151845547</figcaption>
+</figure>
+<p>X轴为权值，Y轴为误差，那么我们能计算得到曲线斜率为0的位置为最低位置（x=0），如果是一个复杂的多维函数，不容易直接通过计算得出曲线或者平面的最低位置，所以可以使用梯度下降法来通过迭代计算最低位置。相当于放一个小球，小球会在重力的影响下，沿最陡的方向下降。</p>
+<p>假设目前在x=10的点上(x0)，梯度为： <span class="math display">\[
+\nabla f(x_0)=f&#39;(x0)=2x=20
+\]</span>
+那梯度的反方向就是下降率最快的方向，如果步长为η=0.2，那么新的位置x1为：
+<span class="math display">\[
+x_1 = x_0 - \eta×\nabla f(x_0)=10-0.2*20=6
+\]</span> 然后继续迭代，直到梯度曲线趋近于0.</p>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+<col style="width: 8%" />
+</colgroup>
+<thead>
+<tr>
+<th></th>
+<th>x0</th>
+<th>x1</th>
+<th>x2</th>
+<th>x3</th>
+<th>x4</th>
+<th>x5</th>
+<th>x6</th>
+<th>X7</th>
+<th>x8</th>
+<th>x9</th>
+<th>X10</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>梯度</td>
+<td>20</td>
+<td>12</td>
+<td>7,2</td>
+<td>4.32</td>
+<td>2.59</td>
+<td>1.56</td>
+<td>0.93</td>
+<td>0.56</td>
+<td>0.34</td>
+<td>0.2</td>
+<td>0.12</td>
+</tr>
+</tbody>
+</table>
+<p>注意步长的选择，如果步长太小，那么经过多次迭代仍然无法达到曲线或者平面的最低点，如果步长过长，那么或跳过最低点，从而不收敛。</p>
+<p>同理，可以从二维（一元函数，曲线）推广到三维（二元函数，平面）甚至多维，目标就是找到最陡的反向，然后按步长走到下一个位置，然后一直迭代下去。</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/305638940">参考文档</a></p>
+<h2 id="反向传播">反向传播</h2>
+<p>假设使用均方误差（MSE）来作为误差评估方法，那么误差为(这个是MSE么???)：
+<span class="math display">\[
+E=\Sigma\frac{1}{2}(o-out_o)^2
+\]</span> 由于这个例子中只有一个输出，那么误差为： <span
+class="math display">\[
+E=\frac{1}{2}(0.01-0.2734)^2=0.03468978
+\]</span>
+反向传播就是通过误差来计算当前参数的梯度，然后沿梯度下降的方向走一个步长η，迭代此过程。</p>
+<p>根据正向传播的函数，能够得到： <span class="math display">\[
+out_o = \frac{1}{1+\epsilon^{net_o}} = \frac{1}{1+\epsilon^{(i1×w1+b1 +
+i2×w2+b2)}}
+\]</span></p>
+<p><span class="math display">\[
+E=\Sigma\frac{1}{2}(o-out_o)^2=\Sigma\frac{1}{2}(o-\frac{1}{1+\epsilon^{(i1×w1+b1
++ i2×w2+b2)}})^2
+\]</span></p>
+<p>我们要计算梯度，也就是要计算总的误差E在w1和w2的偏导值。</p>
+<p>这个公式比较复杂，所以要使用到求导的链式法则。</p>
+<h2 id="链式法则">链式法则</h2>
+<p><span class="math display">\[
+\frac{\partial E}{\partial w1}=\frac{\partial E}{\partial
+out_o}×\frac{\partial out_o}{\partial net_o}×\frac{\partial
+net_o}{\partial w1}
+\]</span></p>
+<p>那么，上述复杂函数的求导就可以转换成几个简单函数求导的乘积。 <span
+class="math display">\[
+\frac{\partial E}{\partial
+out_0}=2×\frac{1}{2}(o-out_o)^1*-1+0=(0.01-0.2734)*-1=0.2634
+\]</span></p>
+<p><span class="math display">\[
+\frac{\partial out_o}{\partial
+net_o}=out_o(1-out_o)=0.2734(1-0.2734)=0.19865244
+\]</span></p>
+<p><span class="math display">\[
+\frac{\partial net_o}{\partial w1}=i1=0.05
+\]</span></p>
+<p>相乘可得： <span class="math display">\[
+\frac{\partial E}{\partial w1}=0.2634×0.19865244×0.05=0.0002616
+\]</span> 同理： <span class="math display">\[
+\frac{\partial E}{\partial w2}=0.2634×0.19865244×0.10=0.0052325
+\]</span> 如果步长η=0.2，那么： <span class="math display">\[
+w1&#39; = w1 - \eta×\frac{\partial E}{\partial w1} =0.004994768
+\]</span></p>
+<p><span class="math display">\[
+w2&#39; = w2 - \eta×\frac{\partial E}{\partial w2} =0.0989535
+\]</span></p>
+<p>然后，使用更新后的权值做下一步迭代。</p>
+<p><a
+target="_blank" rel="noopener" href="https://www.cnblogs.com/charlotte77/p/5629865.html">参考文档</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/06/Python-C-API-pybind11/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -405,7 +620,7 @@ target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment
 
   
 
-  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
 <script src="/js/third-party/math/mathjax.js"></script>
 
 
