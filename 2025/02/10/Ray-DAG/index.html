@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="https://dogecoin.com/assets/images/doge.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://dogecoin.com/assets/images/doge.svg">
+  <link rel="icon" type="image/png" sizes="16x16" href="https://dogecoin.com/assets/images/doge.svg">
+  <link rel="mask-icon" href="https://dogecoin.com/assets/images/doge.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha256-dABdfBfUoC8vJUBOwGVdm8L9qlMWaHTIfXt+7GnZCIo=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.22.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"copycode":{"enable":true,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":true,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+
+
+<link rel="canonical" href="http://example.com/2025/02/10/Ray-DAG/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2025/02/10/Ray-DAG/","path":"2025/02/10/Ray-DAG/","title":"Ray DAG"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Ray DAG | hipudding's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">hipudding's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFdag"><span class="nav-number">1.</span> <span class="nav-text">什么是DAG</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dag%E7%9A%84%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">DAG的使用方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dagnode"><span class="nav-number">3.</span> <span class="nav-text">DAGNode</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dagnode-1"><span class="nav-number">3.1.</span> <span class="nav-text">DAGNode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#functionnode"><span class="nav-number">3.2.</span> <span class="nav-text">FunctionNode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#classnode%E5%92%8Cclassmethodnode"><span class="nav-number">3.3.</span> <span class="nav-text">ClassNode和ClassMethodNode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#inputnode%E5%92%8Cinputattributenode"><span class="nav-number">3.4.</span> <span class="nav-text">InputNode和InputAttributeNode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multioutputnode"><span class="nav-number">3.5.</span> <span class="nav-text">MultiOutputNode</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="hipudding"
+      src="https://dogecoin.com/assets/images/doge.svg">
+  <p class="site-author-name" itemprop="name">hipudding</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/hipudding" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;hipudding" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:huafengchun@gmail.com" title="E-Mail → mailto:huafengchun@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/02/10/Ray-DAG/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
+      <meta itemprop="name" content="hipudding">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Ray DAG | hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ray DAG
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2025-02-10 18:59:48 / 修改时间：19:00:32" itemprop="dateCreated datePublished" datetime="2025-02-10T18:59:48+08:00">2025-02-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>[toc]</p>
+<h2 id="什么是dag">什么是DAG</h2>
+<p>Ray DAG（Directed Acyclic Graph）是 Ray
+计算框架中用于表示任务依赖关系的有向无环图结构。它定义了一组计算任务（Tasks
+或 Actors）及其依赖关系，以 DAG 形式组织任务的执行，简称计算图。</p>
+<p>DAG的作用有：</p>
+<ol type="1">
+<li>延迟计算，与remote不同，bind方法仅会构建计算图，而不是立即执行。可以打包复杂的调用关系，然后直接执行图，DAG可以重复执行；</li>
+<li>是实现workflow的核心组件；</li>
+<li>是实现Accelerate DAG的核心组件。</li>
+</ol>
+<h2 id="dag的使用方法">DAG的使用方法</h2>
+<p>使用方法参考<a
+target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-core/ray-dag.html#ray-dag-guide">官方手册</a>，DAG节点可以包含Class，ClassMethod，Function，Input，
+Output等类型的节点。</p>
+<p>更直观的方式是将DAG的可视化，当前支持<a
+target="_blank" rel="noopener" href="https://github.com/ray-project/ray/pull/47958">生成图片</a>或者生成<a
+target="_blank" rel="noopener" href="https://github.com/ray-project/ray/issues/48315">ascii格式</a>的DAG示意图，如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> ray</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">from</span> ray.dag.input_node <span class="keyword">import</span> InputNode</span><br><span class="line"><span class="keyword">from</span> ray.dag.output_node <span class="keyword">import</span> MultiOutputNode</span><br><span class="line">ray.init(address = <span class="string">&quot;10.218.163.33:6274&quot;</span>)</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="meta">@ray.remote</span></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Actor</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, init_value, fail_after=<span class="literal">None</span>, sys_exit=<span class="literal">False</span></span>):</span><br><span class="line">        self.i = init_value</span><br><span class="line">        self.fail_after = fail_after</span><br><span class="line">        self.sys_exit = sys_exit</span><br><span class="line"></span><br><span class="line">        self.count = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">echo</span>(<span class="params">self, x</span>):</span><br><span class="line">        self.count += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">sleep</span>(<span class="params">self, x</span>):</span><br><span class="line">        time.sleep(x)</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="meta">    @ray.method(<span class="params">num_returns=<span class="number">2</span></span>)</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">return_two</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> x, x + <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">read_input</span>(<span class="params">self, x</span>):</span><br><span class="line">        <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a = Actor.remote(<span class="number">0</span>)</span><br><span class="line">b = Actor.remote(<span class="number">0</span>)</span><br><span class="line">single_fetch = <span class="literal">True</span></span><br><span class="line"><span class="keyword">with</span> InputNode() <span class="keyword">as</span> i:</span><br><span class="line">    o1, o2 = a.return_two.bind(i)</span><br><span class="line">    o3 = b.echo.bind(o1)</span><br><span class="line">    o4 = b.echo.bind(o2)</span><br><span class="line">    dag = MultiOutputNode([o3, o4])</span><br><span class="line"></span><br><span class="line">compiled_dag = dag.experimental_compile()</span><br><span class="line"><span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>):</span><br><span class="line">    refs = compiled_dag.execute(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">if</span> single_fetch:</span><br><span class="line">        <span class="keyword">for</span> i, ref <span class="keyword">in</span> <span class="built_in">enumerate</span>(refs):</span><br><span class="line">            res = ray.get(ref)</span><br><span class="line">            <span class="keyword">assert</span> res == i + <span class="number">1</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        res = ray.get(refs)</span><br><span class="line">        <span class="keyword">assert</span> res == [<span class="number">1</span>, <span class="number">2</span>]</span><br><span class="line">compiled_dag.visualize()</span><br><span class="line">compiled_dag.teardown()</span><br></pre></td></tr></table></figure>
+<figure>
+<img
+src="https://raw.githubusercontent.com/hipudding/blog_img/main/img/image-20250210140344597.png"
+alt="image-20250210140344597" />
+<figcaption aria-hidden="true">image-20250210140344597</figcaption>
+</figure>
+<h2 id="dagnode">DAGNode</h2>
+<p>DAG是由DAGNode组成，每个DAGNode代表一个Task或者Actor，图的边代表数据的依赖关系，由被依赖者指向依赖者。整个图从上到下分别是InputNode，各个任务Node以及OutputNode。</p>
+<figure>
+<img
+src="https://cdn-0.plantuml.com/plantuml/png/ZLHDZzem4BtpAtnajy0FG56rBAWVKhT8xVPi6MSWRfrnP8_BehR_lKuS2mj7tNAmyBmtC-zvHdbm92pvLizcKWlds6xp_hEfWVsQiV1RicVVQQWsU7dB-C5uhBcm9pU2EoMf-afMuMd1SiwFy_-mJ4VAOABjXvlGLS6_9b03TX30oN0BpkYVCAP_KewgKNr8gCqP7LaGBSSGIKrYMSQ3xOC6xhsgH-JH60q2MIml3P9Go14SGSrhSHhAJFVotKIdqhKKiW5-jARbMZZYy0BIKwgvRGGYwBsdpjFpfGF6APoyKKWt4bNGTxAYQxWPs5Tfm_4c3N7UMrbd8romE9XreIv0SHhJsEJ3Jp3lHW5dHSrL_ZpyMvS6xzP9w9Xr0XfwpEzoqHaOrGUux9onef7NQLEUNalAzgQdHjQ82tT16KiVleCaRk7eYdd_iuNK82mV5cMUtX9UEh2g1IIXkJHjfpJCLwjLABEDjpeyuqXEFUvxNmjsVn-VB72_eJ9OMN5PxGTrN-2uOFrLI39sjUdF3m9h3L7CzAfBetL8lbdveFLF-e1i-xDdv_SdeCRKMVITHzbFAGjznCxJxNr3PDN14sJ0azUauXfbqHrqsbnQm1YSZPeVXGDM_Lukqwub80QJsZASH9TWqbuYqK8PBftaU64e1mjV3u1r_xt-2m00"
+alt="PlantUML diagram" />
+<figcaption aria-hidden="true">PlantUML diagram</figcaption>
+</figure>
+<h3 id="dagnode-1">DAGNode</h3>
+<p>DAGNode是对操作和其参数的一个封装，其包含实际执行的逻辑，例如，针对FunctionNode而言，就是函数对象，以及该函数的所有入参。DAGNode还会记录当前节点的上下游信息，并且能够按依赖顺序执行每一个Node。</p>
+<p>**_PyObjScanner**</p>
+<p>DAGNode中有多个函数均使用到了PyObjScanner，这是利用pickle库来扫描给定对象中所有的DAGNodeBase类型的对象。比如，在获取节点的上游节点（所有依赖的节点）<code>collect_upstream_nodes</code>以及扫描所有children节点<code>get_all_child_nodes</code>时，就是通过扫描所有入参，来确定在执行当前Node之前，有哪些Node需要先完成计算。</p>
+<p><strong>apply_recursive</strong></p>
+<p>DAGNode执行的核心是这个递归执行函数，该函数从叶子节点开始，根据依赖关系递归的执行。<code>apply_recursive</code>提供了一个<code>Cachingfn</code>的内部类，该类能够缓存当前节点执行结果（也有可能是一个future对象）而避免节点被重复计算。当<code>Cachingfn</code>对象创建后，会将原来的执行函数替换成自己。</p>
+<ul>
+<li><p>如果<code>apply_recursive</code>不是第一次被调用，则直接返回cache中缓存的结果。</p></li>
+<li><p>如果是第一次被调用，首先根据传入的执行函数fn来生成<code>Cachingfn</code>对象，然后将fn函数替换成<code>Cachingfn</code>对象，该对象提供<code>__call__</code>方法，该方法是一个warpper，调用原始回调函数fn，并且记录缓存，并返回结果。</p></li>
+</ul>
+<p>以FunctionNode为例，<code>apply_recursive</code>的回调函数是将FunctionNode中记录的函数构造成remote对象，然后直接调用remote方法。所以该回调函数的参数需要是一个数据对象，例如：标准的数据类型，或者是一个object_ref。但是DAGNode的arg是另外一个DAGNode，并不能直接被回调函数所执行，所以，在执行当前节点之前，需要对入参进行替换。</p>
+<p><strong>apply_and_replace_all_child_nodes</strong></p>
+<p>该函数就提供了替换DAGNode入参类型的功能。该函数接受一个回调函数作为参数，该回调函数即对为Node的<code>apply_recursive</code>替换也就是将当前的DAGNode，通过<code>apply_recursive</code>替换成当前节点执行完成后的结果。而这个<code>apply_recursive</code>函数会递归的处理子节点的所有子节点。</p>
+<p>最终，会递归到InputNode，获取到InputNode的值，然后交给InputNode的后续节点计算，然后再将计算结果交个在后续的节点，直到执行完毕，执行完成后会返回一个object_ref，可以使用get方法获取实际的计算结果。</p>
+<p>**PR点：_get_toplevel_child_nodes没有引用了，可以删除**</p>
+<h3 id="functionnode">FunctionNode</h3>
+<p>FunctionNode是DAGNode的子类，代表一个函数节点，该节点通过remote函数的<code>.bind</code>方法生成，除了基类的属性之外，FunctionNode还需要保存函数体。</p>
+<p><code>execute_impl</code>即调用该函数的remote方法：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_execute_impl</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Executor of FunctionNode by ray.remote().</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Args and kwargs are to match base class signature, but not in the</span></span><br><span class="line"><span class="string">        implementation. All args and kwargs should be resolved and replaced</span></span><br><span class="line"><span class="string">        with value in bound_args and bound_kwargs via bottom-up recursion when</span></span><br><span class="line"><span class="string">        current node is executed.</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            ray.remote(self._body)</span><br><span class="line">            .options(**self._bound_options)</span><br><span class="line">            .remote(*self._bound_args, **self._bound_kwargs)</span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+<h3 id="classnode和classmethodnode">ClassNode和ClassMethodNode</h3>
+<p>ClassNode是DAGNode的子类，代表一个类，该节点通过remote类的<code>.bind</code>方法生成，该Node中保存了Class本身。ClassNode的<code>execute_impl</code>函数仅执行了remote方法，将对象在集群中实例化。</p>
+<p>当使用该Node对应类的函数时，需要对这些函数在进行一次<code>bind</code>。ClassNode通过<code>__getattr__</code>获得其中Class的函数，该函数也提供了<code>.bind</code>方法，调用可以生成ClassMethodNode对象。在对ClassMethod进行bind是，还会记录actor的句柄。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">ClassNode</span>:</span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">__getattr__</span>(<span class="params">self, method_name: <span class="built_in">str</span></span>):</span><br><span class="line">      <span class="comment"># User trying to call .bind() without a bind class method</span></span><br><span class="line">      <span class="keyword">if</span> method_name == <span class="string">&quot;bind&quot;</span> <span class="keyword">and</span> <span class="string">&quot;bind&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> <span class="built_in">dir</span>(self._body):</span><br><span class="line">          <span class="keyword">raise</span> AttributeError(<span class="string">f&quot;.bind() cannot be used again on <span class="subst">&#123;<span class="built_in">type</span>(self)&#125;</span> &quot;</span>)</span><br><span class="line">      <span class="comment"># Raise an error if the method is invalid.</span></span><br><span class="line">      <span class="built_in">getattr</span>(self._body, method_name)</span><br><span class="line">      call_node = _UnboundClassMethodNode(self, method_name, &#123;&#125;)</span><br><span class="line">      <span class="keyword">return</span> call_node</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">_UnboundClassMethodNode</span>:</span><br><span class="line">  <span class="keyword">def</span> <span class="title function_">bind</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">          other_args_to_resolve = &#123;</span><br><span class="line">              PARENT_CLASS_NODE_KEY: self._actor,</span><br><span class="line">              PREV_CLASS_METHOD_CALL_KEY: self._actor._last_call,</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          node = ClassMethodNode(</span><br><span class="line">              self._method_name,</span><br><span class="line">              args,</span><br><span class="line">              kwargs,</span><br><span class="line">              self._options,</span><br><span class="line">              other_args_to_resolve=other_args_to_resolve,</span><br><span class="line">          )</span><br><span class="line">          self._actor._last_call = node</span><br><span class="line">          <span class="keyword">return</span> node</span><br></pre></td></tr></table></figure>
+<p>ClassMethodNode也是DAGNode的子类，代表一个类的成员函数，分为class_method_call以及class_method_output两种类型，class_method_output类型是一个特殊的Node，该node仅作为存储ClassMethodNode的结果使用。ClassMethodNode的bind函数返回的就是一个class_method_output类型的tuple。class_method_output类型的Node执行即为返回其中实际存储的CLassMethod的返回结果。简单的说，就是将一个函数返回的tuple做了一个封装。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">_execute_impl</span>(<span class="params">self, *args, **kwargs</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Executor of ClassMethodNode by ray.remote()</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args and kwargs are to match base class signature, but not in the</span></span><br><span class="line"><span class="string">    implementation. All args and kwargs should be resolved and replaced</span></span><br><span class="line"><span class="string">    with value in bound_args and bound_kwargs via bottom-up recursion when</span></span><br><span class="line"><span class="string">    current node is executed.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">if</span> self.is_class_method_call:</span><br><span class="line">        method_body = <span class="built_in">getattr</span>(self._parent_class_node, self._method_name)</span><br><span class="line">        <span class="comment"># Execute with bound args.</span></span><br><span class="line">        <span class="keyword">return</span> method_body.options(**self._bound_options).remote(</span><br><span class="line">            *self._bound_args,</span><br><span class="line">            **self._bound_kwargs,</span><br><span class="line">        )</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">assert</span> self._class_method_output <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span></span><br><span class="line">        <span class="keyword">return</span> self._bound_args[<span class="number">0</span>][self._class_method_output.output_idx]</span><br></pre></td></tr></table></figure>
+<p><strong>PR点：其实这个output类型的Node仅作为数据的存储，和ClassMethodNode混在一起比较难理解，不如搞一个新的Node类型</strong></p>
+<h3
+id="inputnode和inputattributenode">InputNode和InputAttributeNode</h3>
+<p>InputNode是DAGNode的子类，代表一组输入，InputAttributeNode也是DAGNode的子类，代表一组输入中的一个元素，可以通过下标或者<code>.</code>操作符来获取。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> ray.dag.InputNode <span class="keyword">as</span> inp:</span><br><span class="line">    x = fun.bind(inp)</span><br></pre></td></tr></table></figure>
+<p>上述代码是使用整个input作为fun函数的入参，这个参数就是InputNode；</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">with</span> ray.dag.InputNode <span class="keyword">as</span> inp:</span><br><span class="line">    x = fun1.bind(inp[<span class="number">0</span>])</span><br><span class="line">    y = fun2.bind(inp.x)</span><br></pre></td></tr></table></figure>
+<p>这段代码中，fun1和fun2使用了input中的部分数据，这里的参数就是InputAttributeNode。</p>
+<p>InputNode的<code>execute_impl</code>比较简单，就是返回args，InputAttributeNode内部有InputNode的引用，通过<code>__get_attr__</code>以及<code>__get_item__</code>函数来获取InputNode中的arg。</p>
+<h3 id="multioutputnode">MultiOutputNode</h3>
+<p>MultiOutputNode是DAGNode的子类，可以储存多个输出。比如，我们想执行一个计算图，但是希望获取超过1个的结果，这时就需要构建一个MultiOutputNode。</p>
+<p>MultiOutputNode的<code>execute_impl</code>就是将入参转成一个list返回。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/23/Ray%E6%8A%80%E6%9C%AF%E5%85%A5%E9%97%A8-%E7%BC%96%E8%AF%91%E9%83%A8%E7%BD%B2%E5%92%8C%E4%BB%BB%E5%8A%A1%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" rel="prev" title="Ray技术入门-编译部署和任务生命周期">
+                  <i class="fa fa-angle-left"></i> Ray技术入门-编译部署和任务生命周期
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">hipudding</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+  <div class="reading-progress-bar"></div>
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+  <a href="https://github.com/hipudding" class="github-corner" title="在 GitHub 上关注我" aria-label="在 GitHub 上关注我" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script><script src="/js/bookmark.js"></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
