@@ -138,7 +138,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/02/10/Ray-DAG/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/02/10/Ray-DAG%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
@@ -156,7 +156,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2025/02/10/Ray-DAG/" class="post-title-link" itemprop="url">Ray DAG</a>
+          <a href="/2025/02/10/Ray-DAG%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" class="post-title-link" itemprop="url">Ray DAG</a>
         </h2>
 
         <div class="post-meta-container">
@@ -166,9 +166,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-02-10 18:59:48 / 修改时间：19:46:58" itemprop="dateCreated datePublished" datetime="2025-02-10T18:59:48+08:00">2025-02-10</time>
+      <time title="创建时间：2025-02-10 18:59:48" itemprop="dateCreated datePublished" datetime="2025-02-10T18:59:48+08:00">2025-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-02-12 16:27:17" itemprop="dateModified" datetime="2025-02-12T16:27:17+08:00">2025-02-12</time>
     </span>
 
   
@@ -250,6 +256,11 @@ id="inputnode和inputattributenode">InputNode和InputAttributeNode</h3>
 <h3 id="multioutputnode">MultiOutputNode</h3>
 <p>MultiOutputNode是DAGNode的子类，可以储存多个输出。比如，我们想执行一个计算图，但是希望获取超过1个的结果，这时就需要构建一个MultiOutputNode。</p>
 <p>MultiOutputNode的<code>execute_impl</code>就是将入参转成一个list返回。</p>
+<h3 id="collectiveoutputnode">CollectiveOutputNode</h3>
+<p>CollectiveOutputNode是ClassMethodNode的子类，这个Node不能被执行，所以仅用于计算图编译中。该类使用other_args_to_resolve传入一个_CollectiveOperation。</p>
+<p>_CollectiveOperation目前仅支持allReduce，该类提供了nccl_group的初始化功能，将all_reduce的节点放到一个group中。其<code>execute</code>方法就是执行group的all_reduce方法</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">type_hint = self._type_hint</span><br><span class="line"><span class="keyword">if</span> type_hint.communicator_id <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">    <span class="keyword">return</span> type_hint.communicator_id</span><br><span class="line"><span class="keyword">if</span> communicator_id <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">    communicator_id = _init_communicator(</span><br><span class="line">        self._actor_handles, type_hint.get_custom_communicator()</span><br><span class="line">    )</span><br><span class="line">type_hint.set_communicator_id(communicator_id)</span><br><span class="line"><span class="keyword">return</span> communicator_id</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> <span class="built_in">isinstance</span>(send_buf, torch.Tensor):</span><br><span class="line">    <span class="keyword">raise</span> ValueError(<span class="string">&quot;Expected a torch tensor&quot;</span>)</span><br><span class="line">communicator = self.get_communicator()</span><br><span class="line">recv_buf = torch.empty_like(send_buf)</span><br><span class="line">communicator.allreduce(send_buf, recv_buf, self._op)</span><br><span class="line"><span class="keyword">return</span> recv_buf</span><br></pre></td></tr></table></figure>
 
       
     </div>
