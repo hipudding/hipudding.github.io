@@ -138,6 +138,100 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/20/Compile-OpenCV-with-CANN-backend/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="https://dogecoin.com/assets/images/doge.svg">
+      <meta itemprop="name" content="hipudding">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | hipudding's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/09/20/Compile-OpenCV-with-CANN-backend/" class="post-title-link" itemprop="url">Compile OpenCV with CANN backend</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-09-20 15:35:05" itemprop="dateCreated datePublished" datetime="2023-09-20T15:35:05+08:00">2023-09-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-01-23 15:36:26" itemprop="dateModified" datetime="2025-01-23T15:36:26+08:00">2025-01-23</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="prepare-environment">Prepare environment</h2>
+<p>Simply you can use docker container, <a
+target="_blank" rel="noopener" href="https://github.com/hipudding/opencv_contrib/blob/npu_support/modules/cannops/Dockerfile">Dockerfile
+is here</a>.</p>
+<p>Or install manually:</p>
+<p><strong>driver</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Download driver here. https://www.hiascend.com/hardware/firmware-drivers</span><br><span class="line">chmod +x A300-3010-npu-driver_6.0.0_linux-x86_64.run</span><br><span class="line">./A300-3010-npu-driver_6.0.0_linux-x86_64.run --install</span><br></pre></td></tr></table></figure>
+<p><strong>toolkit</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Download ascend_toolkit here. https://www.hiascend.com/en/software/cann/community</span><br><span class="line">chmod +x Ascend-cann-toolkit_7.0.RC1.alpha002_linux-x86_64.run</span><br><span class="line">./Ascend-cann-toolkit_7.0.RC1.alpha002_linux-x86_64.run --install</span><br></pre></td></tr></table></figure>
+<h2 id="clone-repository">Clone repository</h2>
+<p>Clone opencv repositories, In order to facilitate code reading, make
+sure opencv_contrib is inside opencv dir.</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone git@github.com:opencv/opencv.git</span><br><span class="line">cd opencv</span><br><span class="line">git clone git@github.com:opencv/opencv_contrib.git</span><br></pre></td></tr></table></figure>
+<h2 id="build">Build</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">cmake </span><br><span class="line">-DCMAKE_INSTALL_PREFIX=/home/hua/code/opencv/build/install </span><br><span class="line">-DWITH_DEBUG=1 </span><br><span class="line">-DBUILD_WITH_DEBUG_INFO=1 </span><br><span class="line">-DOPENCV_EXTRA_MODULES_PATH=/home/hua/code/opencv/opencv_contrib/modules </span><br><span class="line">-DWITH_CUDA=0 </span><br><span class="line">-DWITH_CANN=1 </span><br><span class="line">-DPYTHON3_EXECUTABLE=/home/hua/anaconda3/envs/py39/bin/python </span><br><span class="line">-DPYTHON_LIBRARY=/home/hua/anaconda3/envs/py39 </span><br><span class="line">-DPYTHON_INCLUDE_DIR=/home/hua/anaconda3/envs/py39/include/python3.9 </span><br><span class="line">-DBUILD_opencv_wechat_qrcode=OFF </span><br><span class="line">-DBUILD_opencv_xfeatures2d=OFF </span><br><span class="line">-DBUILD_opencv_face=OFF </span><br><span class="line">-DBUILD_opencv_dnn=OFF </span><br><span class="line">-DBUILD_opencv_features2d=OFF </span><br><span class="line">-DWITH_CAROTENE=OFF </span><br><span class="line">-DWITH_IPP=OFF </span><br><span class="line">-DBUILD_DOCS=ON</span><br><span class="line"></span><br><span class="line">make -j</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<p>Make sure CANN and python-dev is detected:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[cmake] --   CANN:                          YES</span><br><span class="line">[cmake] --     Include path                 /home/hua/Ascend/ascend-toolkit/latest/include /home/hua/Ascend/ascend-toolkit/latest/opp</span><br><span class="line">[cmake] --     Link libraries:              /home/hua/Ascend/ascend-toolkit/latest/acllib/lib64/libascendcl.so /home/hua/Ascend/ascend-toolkit/latest/lib64/libacl_op_compiler.so /home/hua/Ascend/ascend-toolkit/latest/opp/built-in/op_proto/lib/linux/x86_64/libopsproto.so /home/hua/Ascend/ascend-toolkit/latest/compiler/lib64/libgraph.so /home/hua/Ascend/ascend-toolkit/latest/compiler/lib64/libge_compiler.so /home/hua/Ascend/ascend-toolkit/latest/compiler/lib64/libgraph_base.so</span><br><span class="line">[cmake] -- </span><br><span class="line">[cmake] --   Python 3:</span><br><span class="line">[cmake] --     Interpreter:                 /home/hua/anaconda3/envs/py39/bin/python (ver 3.9.17)</span><br><span class="line">[cmake] --     Libraries:                   /home/hua/anaconda3/envs/py39/lib/libpython3.9.so (ver 3.9.17)</span><br><span class="line">[cmake] --     numpy:                       /home/hua/anaconda3/envs/py39/lib/python3.9/site-packages/numpy/core/include (ver 1.25.2)</span><br><span class="line">[cmake] --     install path:                lib/python3.9/site-packages/cv2/python-3.9</span><br></pre></td></tr></table></figure>
+<h2 id="run-test">Run Test</h2>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/opencv_test_cannops</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/31/OpenCV%E7%A4%BE%E5%8C%BA%E6%B4%9E%E5%AF%9F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
