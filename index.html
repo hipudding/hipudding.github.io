@@ -544,7 +544,7 @@ id="inputnode和inputattributenode">InputNode和InputAttributeNode</h3>
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-02-18 15:32:34" itemprop="dateModified" datetime="2025-02-18T15:32:34+08:00">2025-02-18</time>
+      <time title="修改时间：2025-02-18 15:55:58" itemprop="dateModified" datetime="2025-02-18T15:55:58+08:00">2025-02-18</time>
     </span>
 
   
@@ -665,7 +665,7 @@ target="_blank" rel="noopener" href="https://docs.ray.io/en/latest/ray-contribut
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd ../../..</span><br><span class="line">pip install -r requirements.txt</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#如果构建机器的内存小于32G，需要限制内存使用，避免oom</span></span></span><br><span class="line">export BAZEL_ARGS=&quot;--local_ram_resources=8&quot;</span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">#debug编译，保留符号表供调试</span></span></span><br><span class="line">export RAY_DEBUG_BUILD=debug</span><br><span class="line">pip install -e . --verbose</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>注意：有可能构建环境会错误的选择到gcc和lld，会导致一些奇怪的编译错误（例如，你的环境变量中存在lld，被识别，但是构建过程中并不会使用非系统路径下的lld等）。这时可以通过指定LD来解决：</p>
-<p>BAZEL_ARGS="--action_env=LD=/usr/bin/ld"</p>
+<p>在 ~/.bazelrc 中加入：build --linkopt=-fuse-ld=gold</p>
 </blockquote>
 <h3 id="可选的编译环境变量">可选的编译环境变量</h3>
 <ul>
